@@ -26,7 +26,6 @@ asr_model = load_asr(asr_model_name)
 # Load emotion recognition model from Hugging Face
 @st.cache_resource
 def load_emotion_model():
-    # IMPORTANT: Replace with your actual Hugging Face model repository if different
     model_id = "anhhong225/wav2vec2-emotion"
     try:
         hf_token = st.secrets.get("HF_TOKEN")
