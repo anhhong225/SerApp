@@ -1,1 +1,5 @@
+# Streamlit secrets
+.streamlit/
+
+# Python virtual environment
 chat.env/

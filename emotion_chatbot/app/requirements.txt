@@ -1,9 +1,7 @@
 streamlit
+st-audiorec
+openai-whisper
 torch
-transformers
 torchaudio
-soundfile
-pydub
-whisper
-huggingface_hub
-streamlit-audiorec
+transformers
+sentencepiece
