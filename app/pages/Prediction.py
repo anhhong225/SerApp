@@ -8,11 +8,39 @@ import tempfile
 import whisper
 from st_audiorec import st_audiorec
 import os
+from pathlib import Path
+import toml
 
 # ----------------------------
 #  CONFIG
 # ----------------------------
 st.set_page_config(page_title="Emotion Chatbot", page_icon="🎤", layout="centered")
+
+# Function to get HF token from secrets or local file
+def get_hf_token():
+    """Get Hugging Face token from Streamlit secrets or local secrets file"""
+    try:
+        # First, try to get from Streamlit secrets (works in deployment)
+        if "HF_TOKEN" in st.secrets:
+            return st.secrets["HF_TOKEN"]
+    except:
+        pass
+    
+    # If not found, try to load from local secrets.toml file
+    try:
+        # Get the directory where this script is located
+        current_dir = Path(__file__).parent.parent  # Go up to app directory
+        secrets_path = current_dir / ".streamlit" / "secrets.toml"
+        
+        if secrets_path.exists():
+            secrets = toml.load(secrets_path)
+            if "HF_TOKEN" in secrets:
+                return secrets["HF_TOKEN"]
+    except Exception as e:
+        st.error(f"Error loading secrets file: {e}")
+    
+    # If still not found, return None
+    return None
 
 # Load whisper (speech-to-text)
 st.sidebar.title("Settings")
@@ -30,14 +58,16 @@ asr_model = load_asr(asr_model_name)
 def load_emotion_model():
     model_id = "anhhong225/wav2vec2-emotion"
     try:
-        hf_token = st.secrets.get("HF_TOKEN")
+        hf_token = get_hf_token()
+        
         if not hf_token:
-            st.error("Hugging Face token not found. Please add it to your Streamlit secrets.")
+            st.error("Hugging Face token not found. Please add it to your secrets.toml file or Streamlit secrets.")
+            st.info("Create a file at: app/.streamlit/secrets.toml with:\nHF_TOKEN = \"your_token_here\"")
             st.stop()
 
-            processor = AutoProcessor.from_pretrained(model_id, token=hf_token)
-            model = AutoModelForAudioClassification.from_pretrained(model_id, token=hf_token)
-            pipe = pipeline("audio-classification", model=model, processor=processor)
+        processor = AutoProcessor.from_pretrained(model_id, token=hf_token)
+        model = AutoModelForAudioClassification.from_pretrained(model_id, token=hf_token)
+        pipe = pipeline("audio-classification", model=model, feature_extractor=processor)
 
         return pipe
     except Exception as e:
