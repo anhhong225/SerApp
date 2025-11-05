@@ -1,29 +1,21 @@
 import streamlit as st
+import sys
+from pathlib import Path
 
-st.set_page_config(page_title="Models", page_icon="🤖")
+sys.path.append(str(Path(__file__).parent.parent))
+from utils.chatbot_ui import load_css
 
-st.title("🤖 Model Architecture & Training")
+st.set_page_config(page_title="CSS Test", page_icon="🧪", layout="wide")
 
-st.markdown("""
-## Model Details
+# Load ONLY the test CSS (not global)
+load_css("models.css")
 
-### Architecture
-- Base Model: Wav2Vec2
-- Fine-tuning approach
-- Model parameters
+st.title("CSS TEST PAGE")
+st.write("If you see:")
+st.write("- Orange background")
+st.write("- White text on black background for title")
+st.write("- Blue text for paragraphs")
+st.write("Then CSS is working!")
 
-### Training Process
-- Training dataset size
-- Validation strategy
-- Hyperparameters
-- Training metrics
-
-### Performance
-- Accuracy
-- Confusion matrix
-- Per-class performance
-
-You can display your model training results, confusion matrices, and performance metrics here.
-""")
-
-# Add your model information and visualizations here
+st.markdown("---")
+st.write("Check the SIDEBAR for debug information →")

@@ -11,15 +11,12 @@ import os
 from pathlib import Path
 import toml
 import sys
-
-sys.path.append(str(Path(__file__).parent.parent))
 from utils.chatbot_ui import load_css, render_chat_header, initialize_chat_session, display_chat_history, add_message
 
-# ----------------------------
-#  CONFIG
-# ----------------------------
 st.set_page_config(page_title="Emotion Chatbot", page_icon="🎤", layout="centered")
-load_css()
+
+# Load global CSS and chatbot-specific CSS
+load_css("global.css", "chatbot.css")
 # Function to get HF token from secrets or local file
 def get_hf_token():
     """Get Hugging Face token from Streamlit secrets or local secrets file"""

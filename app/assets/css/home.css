@@ -1,0 +1,65 @@
+/* ==================== DATA COLLECTION PAGE ==================== */
+
+/* Orange background */
+.main {
+    background-color: #fff3e0 !important;
+}
+
+/* All normal text is black */
+.main p,
+.main span,
+.main div,
+.main li {
+    color: #000000 !important;
+}
+
+/* Headings - black text */
+.main h1 {
+    color: #000000 !important;
+}
+
+.main h2 {
+    color: #000000 !important;
+}
+
+.main h3 {
+    color: #000000 !important;
+}
+
+/* Info/Alert boxes - black text */
+.stAlert * {
+    color: #000000 !important;
+}
+
+/* Expander text - black */
+.stExpander * {
+    color: #000000 !important;
+}
+
+/* Metrics - black text */
+[data-testid="stMetricValue"],
+[data-testid="stMetricLabel"] {
+    color: #000000 !important;
+}
+
+/* Tabs text - black */
+.stTabs [data-baseweb="tab-list"] button {
+    color: #000000 !important;
+}
+
+.stTabs [data-baseweb="tab-panel"] * {
+    color: #000000 !important;
+}
+
+/* Table text - black */
+.main table,
+.main td,
+.main th {
+    color: #000000 !important;
+}
+
+/* Table headers can have white text on colored background */
+.main th {
+    background-color: #ff9800;
+    color: white !important;
+}

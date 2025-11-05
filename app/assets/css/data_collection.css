@@ -1,0 +1,95 @@
+/* ==================== DATA COLLECTION PAGE - ORANGE THEME ==================== */
+
+/* Ultra-specific selectors that will override Streamlit */
+html body div.stApp div[data-testid="stAppViewContainer"] > section.main,
+div[data-testid="stAppViewContainer"] .main,
+section[data-testid="stMain"],
+.stApp .main {
+    background-color: #fff3e0 !important;
+}
+
+/* Headings with maximum specificity */
+html body div.stApp section.main h1,
+div[data-testid="stAppViewContainer"] .main h1,
+.stApp .main h1 {
+    color: #e65100 !important;
+    font-size: 2.5rem !important;
+}
+
+html body div.stApp section.main h2,
+div[data-testid="stAppViewContainer"] .main h2,
+.stApp .main h2 {
+    color: #f57c00 !important;
+    border-bottom: 3px solid #ff9800 !important;
+    padding-bottom: 10px !important;
+}
+
+html body div.stApp section.main h3,
+div[data-testid="stAppViewContainer"] .main h3,
+.stApp .main h3 {
+    color: #fb8c00 !important;
+}
+
+/* Normal text - black */
+html body div.stApp section.main p,
+html body div.stApp section.main span,
+html body div.stApp section.main div,
+.stApp .main .stMarkdown {
+    color: #000000 !important;
+}
+
+/* Buttons */
+html body div.stApp .stButton>button,
+.stApp .stButton>button {
+    background-color: #ff9800 !important;
+    color: white !important;
+}
+
+html body div.stApp .stButton>button:hover,
+.stApp .stButton>button:hover {
+    background-color: #f57c00 !important;
+}
+
+/* Tables */
+html body div.stApp section.main table th,
+.stApp .main th {
+    background-color: #ff9800 !important;
+    color: white !important;
+}
+
+/* Alert boxes */
+html body div.stApp .stAlert,
+.stApp .stAlert {
+    background-color: #fff3e0 !important;
+    border-left: 5px solid #ff9800 !important;
+}
+
+html body div.stApp .stAlert *,
+.stApp .stAlert * {
+    color: #000000 !important;
+}
+
+/* Metrics */
+html body div.stApp [data-testid="stMetricValue"],
+.stApp [data-testid="stMetricValue"] {
+    color: #e65100 !important;
+    font-size: 2rem !important;
+}
+
+html body div.stApp [data-testid="stMetricLabel"],
+.stApp [data-testid="stMetricLabel"] {
+    color: #424242 !important;
+}
+
+/* Tabs */
+html body div.stApp .stTabs [data-baseweb="tab-list"] button[aria-selected="true"],
+.stApp .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
+    background-color: #ff9800 !important;
+    color: white !important;
+}
+
+/* Expanders */
+html body div.stApp .stExpander,
+.stApp .stExpander {
+    border-left: 4px solid #ff9800 !important;
+}

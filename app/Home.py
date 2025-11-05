@@ -1,10 +1,17 @@
 import streamlit as st
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent))
+from utils.chatbot_ui import load_css
 
 st.set_page_config(
     page_title="Emotion Recognition System",
     page_icon="🎭",
     layout="wide"
 )
+
+load_css("global.css", "home.css")
 
 st.title("🎭 Emotion Recognition from Speech")
 
