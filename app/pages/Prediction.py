@@ -3,19 +3,23 @@ from xml.parsers.expat import model
 import streamlit as st
 import torch
 import torchaudio
-from transformers import AutoProcessor, AutoModelForAudioClassification, pipeline
+from transformers import AutoFeatureExtractor, AutoModelForAudioClassification, pipeline
 import tempfile
 import whisper
 from st_audiorec import st_audiorec
 import os
 from pathlib import Path
 import toml
+import sys
+
+sys.path.append(str(Path(__file__).parent.parent))
+from utils.chatbot_ui import load_css, render_chat_header, initialize_chat_session, display_chat_history, add_message
 
 # ----------------------------
 #  CONFIG
 # ----------------------------
 st.set_page_config(page_title="Emotion Chatbot", page_icon="🎤", layout="centered")
-
+load_css()
 # Function to get HF token from secrets or local file
 def get_hf_token():
     """Get Hugging Face token from Streamlit secrets or local secrets file"""
@@ -44,14 +48,14 @@ def get_hf_token():
 
 # Load whisper (speech-to-text)
 st.sidebar.title("Settings")
-asr_model_name = st.sidebar.selectbox("Speech-to-text model", ["base", "small", "medium"], index=0)
+st.sidebar.markdown("**Speech-to-text model:** base")
 st.sidebar.markdown("---")
 
 @st.cache_resource
 def load_asr(model_name):
     return whisper.load_model(model_name)
 
-asr_model = load_asr(asr_model_name)
+asr_model = load_asr("base")
 
 # Load emotion recognition model from Hugging Face
 @st.cache_resource
@@ -65,9 +69,9 @@ def load_emotion_model():
             st.info("Create a file at: app/.streamlit/secrets.toml with:\nHF_TOKEN = \"your_token_here\"")
             st.stop()
 
-        processor = AutoProcessor.from_pretrained(model_id, token=hf_token)
+        feature_extractor = AutoFeatureExtractor.from_pretrained(model_id, token=hf_token)
         model = AutoModelForAudioClassification.from_pretrained(model_id, token=hf_token)
-        pipe = pipeline("audio-classification", model=model, feature_extractor=processor)
+        pipe = pipeline("audio-classification", model=model, feature_extractor=feature_extractor)
 
         return pipe
     except Exception as e:
