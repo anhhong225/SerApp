@@ -1,7 +1,9 @@
+from platform import processor
+from xml.parsers.expat import model
 import streamlit as st
 import torch
 import torchaudio
-from transformers import AutoFeatureExtractor, AutoModelForAudioClassification, pipeline
+from transformers import AutoProcessor, AutoModelForAudioClassification, pipeline
 import tempfile
 import whisper
 from st_audiorec import st_audiorec
@@ -33,9 +35,10 @@ def load_emotion_model():
             st.error("Hugging Face token not found. Please add it to your Streamlit secrets.")
             st.stop()
 
-        extractor = AutoFeatureExtractor.from_pretrained(model_id, token=hf_token)
-        model = AutoModelForAudioClassification.from_pretrained(model_id, token=hf_token)
-        pipe = pipeline("audio-classification", model=model, feature_extractor=extractor)
+            processor = AutoProcessor.from_pretrained(model_id, token=hf_token)
+            model = AutoModelForAudioClassification.from_pretrained(model_id, token=hf_token)
+            pipe = pipeline("audio-classification", model=model, processor=processor)
+
         return pipe
     except Exception as e:
         st.error(f"Failed to load emotion model. Please check the model ID and your token: {model_id}")
