@@ -46,39 +46,10 @@
     color: #5dade2 !important;
 }
 
-/* ==================== COMMON PAGE DEFAULTS (can be overridden) ==================== */
-
-/* Default page background - pages can override */
-.main {
-    background-color: #f0f2f6;
-}
-
-/* Default text color - black - pages can override */
-.main * {
-    color: #000000;
-}
-
 /* ==================== REUSABLE COMPONENTS ==================== */
+/* Only style components, NOT text colors - let pages control that */
 
-/* Buttons - consistent across all pages unless overridden */
-.stButton>button {
-    background-color: var(--primary-color);
-    color: white !important;
-    border-radius: var(--border-radius);
-    border: none;
-    padding: 10px 24px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.stButton>button:hover {
-    background-color: #2980b9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px);
-}
-
-/* Typography - basic styling, pages can override colors */
+/* Typography - ONLY structure, NO colors */
 h1 {
     font-weight: 700;
     margin-bottom: 1rem;
@@ -98,18 +69,18 @@ p {
     line-height: 1.6;
 }
 
-/* Alert boxes - basic structure */
+/* Alert boxes - basic structure only */
 .stAlert {
     border-radius: var(--border-radius);
 }
 
-/* Expanders - basic structure */
+/* Expanders - basic structure only */
 .stExpander {
     border-radius: var(--border-radius);
     border: 1px solid var(--light-gray);
 }
 
-/* Tables - basic styling */
+/* Tables - basic styling, pages can override colors */
 table {
     border-collapse: collapse;
     width: 100%;

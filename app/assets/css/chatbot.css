@@ -1,110 +1,93 @@
-/* ==================== CHATBOT PAGE ==================== */
+/* ==================== CHATBOT PAGE - LIGHT THEME ==================== */
 
-/* Chat Container */
-.chat-container {
-    background-color: white;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    height: 75vh;
-    overflow-y: auto;
-    margin: 0 auto;
-    max-width: 800px;
+/* White background */
+html body div.stApp div[data-testid="stAppViewContainer"] > section.main,
+.stApp .main {
+    background-color: #ffffff !important;
 }
 
-/* Chat Messages */
-.stChatMessage {
-    background-color: transparent;
-    border-radius: 12px;
-    padding: 12px;
-    margin: 12px 0;
+/* Headings - Dark Blue */
+.stApp .main h1,
+.stApp .main h2,
+.stApp .main h3 {
+    color: #0d47a1 !important;
 }
 
-/* User message */
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
-    background-color: #e3f2fd;
+/* Markdown & Normal Text - Blue-Black */
+.stApp .main p,
+.stApp .main li,
+.stApp .main span,
+.stApp .main div[data-testid="stMarkdownContainer"] p,
+.stApp .main div[data-testid="stMarkdownContainer"] li {
+    color: #1a237e !important;
 }
 
-/* Assistant message */
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
-    background-color: #f5f5f5;
+/* --- Chat Messages Styling --- */
+
+/* Reset and align the message container */
+div[data-testid="stChatMessage"] {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.25rem !important; /* Reduced gap */
+    margin-bottom: 1rem !important;
+    padding: 0 !important;
+    background-color: transparent !important;
 }
 
-/* Message Content */
-[data-testid="stChatMessageContent"] {
-    background-color: transparent;
+/* The content bubble */
+div[data-testid="stChatMessage"] > div:last-child {
+    padding: 0.8rem 1.2rem !important;
+    border-radius: 20px !important;
+    max-width: 75% !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+    margin: 0 !important; /* Remove any margin */
 }
 
-/* Scrollbar */
-.chat-container::-webkit-scrollbar {
-    width: 10px;
+/* Assistant messages - Blue Gradient */
+div[data-testid="stChatMessage"][data-testid*="assistant"] > div:last-child,
+div[data-testid="stChatMessage"]:has(img[alt="🤖"]) > div:last-child {
+    background: linear-gradient(to right, #1976d2, #0d47a1) !important;
+    border-top-left-radius: 5px !important;
 }
 
-.chat-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
+/* Assistant text - White */
+div[data-testid="stChatMessage"][data-testid*="assistant"] p,
+div[data-testid="stChatMessage"][data-testid*="assistant"] span,
+div[data-testid="stChatMessage"]:has(img[alt="🤖"]) p,
+div[data-testid="stChatMessage"]:has(img[alt="🤖"]) span {
+    color: #FFFFFF !important;
 }
 
-.chat-container::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 10px;
+/* User messages - Gray Background */
+div[data-testid="stChatMessage"][data-testid*="user"],
+div[data-testid="stChatMessage"]:has(img[alt="😊"]) {
+    flex-direction: row-reverse !important;
 }
 
-.chat-container::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+div[data-testid="stChatMessage"][data-testid*="user"] > div:last-child,
+div[data-testid="stChatMessage"]:has(img[alt="😊"]) > div:last-child {
+    background-color: #f0f2f6 !important;
+    border-top-right-radius: 5px !important;
 }
 
-/* Chat Header */
-.chat-header {
-    text-align: center;
-    padding: 20px 0;
-    border-bottom: 2px solid #e0e0e0;
-    margin-bottom: 20px;
+/* User text - Black */
+div[data-testid="stChatMessage"][data-testid*="user"] p,
+div[data-testid="stChatMessage"][data-testid*="user"] span,
+div[data-testid="stChatMessage"]:has(img[alt="😊"]) p,
+div[data-testid="stChatMessage"]:has(img[alt="😊"]) span {
+    color: #111827 !important;
 }
 
-.chat-subtitle {
-    text-align: center;
-    color: #666;
-    font-size: 1rem;
-    margin-bottom: 25px;
-}
-
-/* Audio Recorder Section */
-.audio-recorder-section {
+/* Audio recorder container */
+.stApp .main .element-container:has(iframe[title="st_audiorec.st_audiorec"]) {
     position: sticky;
     bottom: 0;
-    background-color: white;
-    padding: 20px 0;
-    border-top: 2px solid #e0e0e0;
-    margin-top: 20px;
-}
-
-/* Emotion Badge */
-.emotion-badge {
-    display: inline-block;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin: 5px;
-}
-
-.emotion-happy {
-    background-color: #ffeb3b;
-    color: #333;
-}
-
-.emotion-sad {
-    background-color: #2196f3;
-    color: white;
-}
-
-.emotion-angry {
-    background-color: #f44336;
-    color: white;
-}
-
-.emotion-neutral {
-    background-color: #9e9e9e;
-    color: white;
+    background: linear-gradient(to right, #1976d2, #0d47a1);
+    padding: 20px;
+    margin: 0 -2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    border-top: 2px solid #0d47a1;
+    z-index: 99;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
 }

@@ -8,7 +8,7 @@ from utils.chatbot_ui import load_css
 st.set_page_config(page_title="CSS Test", page_icon="🧪", layout="wide")
 
 # Load ONLY the test CSS (not global)
-load_css("models.css")
+load_css("global.css", "models.css")
 
 st.title("CSS TEST PAGE")
 st.write("If you see:")

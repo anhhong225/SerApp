@@ -11,26 +11,24 @@ import os
 from pathlib import Path
 import toml
 import sys
-from utils.chatbot_ui import load_css, render_chat_header, initialize_chat_session, display_chat_history, add_message
+from utils.chatbot_ui import load_css
 
 st.set_page_config(page_title="Emotion Chatbot", page_icon="🎤", layout="centered")
 
 # Load global CSS and chatbot-specific CSS
 load_css("global.css", "chatbot.css")
+
 # Function to get HF token from secrets or local file
 def get_hf_token():
     """Get Hugging Face token from Streamlit secrets or local secrets file"""
     try:
-        # First, try to get from Streamlit secrets (works in deployment)
         if "HF_TOKEN" in st.secrets:
             return st.secrets["HF_TOKEN"]
     except:
         pass
     
-    # If not found, try to load from local secrets.toml file
     try:
-        # Get the directory where this script is located
-        current_dir = Path(__file__).parent.parent  # Go up to app directory
+        current_dir = Path(__file__).parent.parent
         secrets_path = current_dir / ".streamlit" / "secrets.toml"
         
         if secrets_path.exists():
@@ -40,13 +38,7 @@ def get_hf_token():
     except Exception as e:
         st.error(f"Error loading secrets file: {e}")
     
-    # If still not found, return None
     return None
-
-# Load whisper (speech-to-text)
-st.sidebar.title("Settings")
-st.sidebar.markdown("**Speech-to-text model:** base")
-st.sidebar.markdown("---")
 
 @st.cache_resource
 def load_asr(model_name):
@@ -54,7 +46,6 @@ def load_asr(model_name):
 
 asr_model = load_asr("base")
 
-# Load emotion recognition model from Hugging Face
 @st.cache_resource
 def load_emotion_model():
     model_id = "anhhong225/wav2vec2-emotion"
@@ -76,14 +67,13 @@ def load_emotion_model():
         st.exception(e)
         st.stop()
 
-
 emotion_pipe = load_emotion_model()
 
 # ----------------------------
 #  STREAMLIT UI
 # ----------------------------
 st.title("🎧 Emotion Chatbot")
-st.markdown("Click the microphone to record your voice, and the bot will analyze your emotion.")
+st.markdown("Click **Start** to record your voice")
 
 # Initialize chat history and last audio tracker
 if "messages" not in st.session_state:
@@ -108,32 +98,49 @@ if wav_audio_data is not None and wav_audio_data != st.session_state.get("last_a
         tmp.write(wav_audio_data)
         tmp_path = tmp.name
 
-    # Display user's recorded audio
-    st.chat_message("user").audio(wav_audio_data, format='audio/wav')
-
     # Process and respond
     with st.spinner("Thinking..."):
-        # 1. Transcribe speech
-        result = asr_model.transcribe(tmp_path, fp16=False) # Set fp16=False if not using a GPU
+        # 1. Transcribe speech with options to reduce hallucination
+        result = asr_model.transcribe(
+            tmp_path, 
+            fp16=False,
+            language="en",  # Specify language to reduce hallucination
+            condition_on_previous_text=False,  # Don't use context from previous audio
+            temperature=0.0  # Use greedy decoding for more deterministic results
+        )
         text = result["text"].strip()
-
-        if text:
-            # 2. Predict emotion
+        
+        # 2. Check if audio is too short or text is too generic (hallucination indicators)
+        audio_size = len(wav_audio_data)
+        hallucination_phrases = [
+            "thank you", "thanks for watching", "bye", "goodbye",
+            ".", "", "you", "the", "a"
+        ]
+        
+        # If audio is very small (less than 10KB) or text is a hallucination phrase
+        if audio_size < 10000 or text.lower() in hallucination_phrases or len(text) < 2:
+            st.session_state.messages.append({
+                "role": "assistant", 
+                "content": "I didn't hear anything. Please speak clearly and try again."
+            })
+        elif text:
+            # 3. Predict emotion
             preds = emotion_pipe(tmp_path)
-            # The output format of the pipeline might be a list of lists
-            # We sort by score to get the most likely emotion
             preds = sorted(preds, key=lambda x: x['score'], reverse=True)
             top_pred = preds[0]
-            emotion = f"**{top_pred['label']}** (confidence: {top_pred['score']:.2f})"
+            emotion = f"**{top_pred['label']}**"
 
-            # 3. Formulate and display response
-            bot_reply = f"You said: *'{text}'*\n\nI sense you might be feeling {emotion}."
+            # 4. Formulate response
+            bot_reply = f"I sense you might be feeling {emotion}."
+            
+            # 5. Update chat history
+            st.session_state.messages.append({"role": "user", "content": text})
+            st.session_state.messages.append({"role": "assistant", "content": bot_reply})
         else:
-            bot_reply = "I didn't catch that. Could you please try again?"
-        
-        # Update chat history
-        st.session_state.messages.append({"role": "user", "content": f"(Audio recording)"})
-        st.session_state.messages.append({"role": "assistant", "content": bot_reply})
+            st.session_state.messages.append({
+                "role": "assistant", 
+                "content": "I couldn't understand that. Please try again."
+            })
 
     # Clean up the temporary file
     os.remove(tmp_path)

@@ -1,16 +1,56 @@
-/* SUPER SIMPLE TEST - IMPOSSIBLE TO MISS */
-.main {
-    background-color: #FF6600 !important;
+/* ==================== MODELS PAGE - LIGHT THEME ==================== */
+
+/* White background */
+html body div.stApp div[data-testid="stAppViewContainer"] > section.main,
+.stApp .main {
+    background-color: #ffffff !important;
 }
 
-.main h1 {
-    color: #FFFFFF !important;
-    background-color: #000000 !important;
-    padding: 20px !important;
-    font-size: 3rem !important;
+/* Headings - Dark Blue */
+.stApp .main h1 {
+    color: #0d47a1 !important;
+}
+.stApp .main h2 {
+    color: #1565c0 !important;
+}
+.stApp .main h3 {
+    color: #1976d2 !important;
 }
 
-.main p {
-    color: #0000FF !important;
-    font-size: 24px !important;
+/* Markdown & Normal Text - Blue-Black */
+.stApp .main p,
+.stApp .main li,
+.stApp .main span,
+.stApp .main div[data-testid="stMarkdownContainer"] p,
+.stApp .main div[data-testid="stMarkdownContainer"] li {
+    color: #1a237e !important;
+}
+
+/* Strong/Bold text in markdown */
+.stApp .main strong,
+.stApp .main b {
+    color: #0d47a1 !important;
+}
+
+/* Horizontal rule */
+.stApp .main hr {
+    border-color: #1565c0 !important;
+}
+
+/* Buttons */
+.stApp .stButton>button {
+    background-color: #0d47a1 !important;
+    color: white !important;
+}
+.stApp .stButton>button:hover {
+    background-color: #1565c0 !important;
+}
+
+/* Alert boxes */
+.stApp .stAlert {
+    background-color: #e3f2fd !important;
+    border-left: 5px solid #0d47a1 !important;
+}
+.stApp .stAlert * {
+    color: #1a237e !important;
 }

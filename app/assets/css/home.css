@@ -1,65 +1,63 @@
-/* ==================== DATA COLLECTION PAGE ==================== */
+/* ==================== HOME PAGE - WHITE & DARK BLUE THEME ==================== */
 
-/* Orange background */
-.main {
-    background-color: #fff3e0 !important;
+/* White background */
+html body div.stApp div[data-testid="stAppViewContainer"] > section.main,
+.stApp .main {
+    background-color: #ffffff !important;
 }
 
-/* All normal text is black */
-.main p,
-.main span,
-.main div,
-.main li {
-    color: #000000 !important;
+/* Headings - Dark Blue */
+.stApp .main h1 {
+    color: #0d47a1 !important;
+    font-weight: 700 !important;
 }
 
-/* Headings - black text */
-.main h1 {
-    color: #000000 !important;
+.stApp .main h2 {
+    color: #1565c0 !important;
+    font-weight: 600 !important;
 }
 
-.main h2 {
-    color: #000000 !important;
+.stApp .main h3 {
+    color: #1976d2 !important;
 }
 
-.main h3 {
-    color: #000000 !important;
+/* Markdown & Normal Text - Dark Blue */
+.stApp .main p,
+.stApp .main li,
+.stApp .main span,
+.stApp .main div[data-testid="stMarkdownContainer"] p,
+.stApp .main div[data-testid="stMarkdownContainer"] li {
+    color: #0d47a1 !important; /* Changed to Dark Blue */
 }
 
-/* Info/Alert boxes - black text */
-.stAlert * {
-    color: #000000 !important;
+/* Strong/Bold text in markdown */
+.stApp .main strong,
+.stApp .main b {
+    color: #0d47a1 !important;
+    font-weight: 700 !important;
 }
 
-/* Expander text - black */
-.stExpander * {
-    color: #000000 !important;
+/* Horizontal rule */
+.stApp .main hr {
+    border-color: #1565c0 !important;
 }
 
-/* Metrics - black text */
-[data-testid="stMetricValue"],
-[data-testid="stMetricLabel"] {
-    color: #000000 !important;
-}
-
-/* Tabs text - black */
-.stTabs [data-baseweb="tab-list"] button {
-    color: #000000 !important;
-}
-
-.stTabs [data-baseweb="tab-panel"] * {
-    color: #000000 !important;
-}
-
-/* Table text - black */
-.main table,
-.main td,
-.main th {
-    color: #000000 !important;
-}
-
-/* Table headers can have white text on colored background */
-.main th {
-    background-color: #ff9800;
+/* Buttons */
+.stApp .stButton>button {
+    background-color: #0d47a1 !important;
     color: white !important;
+}
+
+.stApp .stButton>button:hover {
+    background-color: #1565c0 !important;
+}
+
+/* Alert boxes */
+.stApp .stAlert {
+    background-color: #e3f2fd !important;
+    border-left: 5px solid #0d47a1 !important;
+}
+
+.stApp .stAlert * {
+    color: #0d47a1 !important;
 }

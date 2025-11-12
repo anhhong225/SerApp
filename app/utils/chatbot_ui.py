@@ -8,8 +8,8 @@ def load_css(*css_files):
     """
     assets_dir = Path(__file__).parent.parent / "assets" / "css"
     
-    # Cache busting: use timestamp or session state
-    cache_buster = int(time.time())  # Changes every second
+    # Add timestamp to force browser reload
+    timestamp = int(time.time())
     
     for css_file in css_files:
         css_path = assets_dir / css_file
@@ -18,12 +18,12 @@ def load_css(*css_files):
             try:
                 with open(css_path, encoding='utf-8') as f:
                     css_content = f.read()
-                    
-                    # Add cache buster comment to force reload
-                    st.markdown(
-                        f"<style data-cache='{cache_buster}'>{css_content}</style>", 
-                        unsafe_allow_html=True
-                    )
+                
+                # Inject with timestamp comment to bypass cache
+                st.markdown(
+                    f"<style>/* {css_file} - {timestamp} */\n{css_content}</style>", 
+                    unsafe_allow_html=True
+                )
             except Exception as e:
                 st.error(f"Error loading CSS {css_file}: {e}")
         else:

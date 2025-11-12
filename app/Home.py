@@ -11,7 +11,7 @@ st.set_page_config(
     layout="wide"
 )
 
-load_css("global.css", "home.css")
+load_css("global.css","home.css")
 
 st.title("🎭 Emotion Recognition from Speech")
 
@@ -53,7 +53,7 @@ Use the sidebar to explore different sections of this project:
 
 ---
 
-**Author**: [Your Name]  
+**Author**: Trinh Hoang Anh Hong  
 **Date**: November 2025
 """)
 

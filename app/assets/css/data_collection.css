@@ -1,95 +1,56 @@
-/* ==================== DATA COLLECTION PAGE - ORANGE THEME ==================== */
+/* ==================== DATA COLLECTION PAGE - LIGHT THEME ==================== */
 
-/* Ultra-specific selectors that will override Streamlit */
+/* White background */
 html body div.stApp div[data-testid="stAppViewContainer"] > section.main,
-div[data-testid="stAppViewContainer"] .main,
-section[data-testid="stMain"],
 .stApp .main {
-    background-color: #fff3e0 !important;
+    background-color: #ffffff !important;
 }
 
-/* Headings with maximum specificity */
-html body div.stApp section.main h1,
-div[data-testid="stAppViewContainer"] .main h1,
+/* Headings - Dark Blue */
 .stApp .main h1 {
-    color: #e65100 !important;
-    font-size: 2.5rem !important;
+    color: #0d47a1 !important;
 }
-
-html body div.stApp section.main h2,
-div[data-testid="stAppViewContainer"] .main h2,
 .stApp .main h2 {
-    color: #f57c00 !important;
-    border-bottom: 3px solid #ff9800 !important;
-    padding-bottom: 10px !important;
+    color: #1565c0 !important;
 }
-
-html body div.stApp section.main h3,
-div[data-testid="stAppViewContainer"] .main h3,
 .stApp .main h3 {
-    color: #fb8c00 !important;
+    color: #1976d2 !important;
 }
 
-/* Normal text - black */
-html body div.stApp section.main p,
-html body div.stApp section.main span,
-html body div.stApp section.main div,
-.stApp .main .stMarkdown {
-    color: #000000 !important;
+/* Markdown & Normal Text - Blue-Black */
+.stApp .main p,
+.stApp .main li,
+.stApp .main span,
+.stApp .main div[data-testid="stMarkdownContainer"] p,
+.stApp .main div[data-testid="stMarkdownContainer"] li {
+    color: #1a237e !important;
+}
+
+/* Strong/Bold text in markdown */
+.stApp .main strong,
+.stApp .main b {
+    color: #0d47a1 !important;
+}
+
+/* Horizontal rule */
+.stApp .main hr {
+    border-color: #1565c0 !important;
 }
 
 /* Buttons */
-html body div.stApp .stButton>button,
 .stApp .stButton>button {
-    background-color: #ff9800 !important;
+    background-color: #0d47a1 !important;
     color: white !important;
 }
-
-html body div.stApp .stButton>button:hover,
 .stApp .stButton>button:hover {
-    background-color: #f57c00 !important;
-}
-
-/* Tables */
-html body div.stApp section.main table th,
-.stApp .main th {
-    background-color: #ff9800 !important;
-    color: white !important;
+    background-color: #1565c0 !important;
 }
 
 /* Alert boxes */
-html body div.stApp .stAlert,
 .stApp .stAlert {
-    background-color: #fff3e0 !important;
-    border-left: 5px solid #ff9800 !important;
+    background-color: #e3f2fd !important;
+    border-left: 5px solid #0d47a1 !important;
 }
-
-html body div.stApp .stAlert *,
 .stApp .stAlert * {
-    color: #000000 !important;
-}
-
-/* Metrics */
-html body div.stApp [data-testid="stMetricValue"],
-.stApp [data-testid="stMetricValue"] {
-    color: #e65100 !important;
-    font-size: 2rem !important;
-}
-
-html body div.stApp [data-testid="stMetricLabel"],
-.stApp [data-testid="stMetricLabel"] {
-    color: #424242 !important;
-}
-
-/* Tabs */
-html body div.stApp .stTabs [data-baseweb="tab-list"] button[aria-selected="true"],
-.stApp .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-    background-color: #ff9800 !important;
-    color: white !important;
-}
-
-/* Expanders */
-html body div.stApp .stExpander,
-.stApp .stExpander {
-    border-left: 4px solid #ff9800 !important;
+    color: #1a237e !important;
 }
