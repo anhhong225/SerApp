@@ -11,6 +11,8 @@ import os
 from pathlib import Path
 import toml
 import sys
+import numpy as np
+import wave
 from utils.chatbot_ui import load_css
 
 st.set_page_config(page_title="Emotion Chatbot", page_icon="🎤", layout="centered")
@@ -39,6 +41,30 @@ def get_hf_token():
         st.error(f"Error loading secrets file: {e}")
     
     return None
+
+def check_audio_has_speech(audio_path, threshold=0.01):
+    """
+    Check if audio file contains actual speech by analyzing amplitude.
+    Returns True if audio has significant content, False if it's mostly silence.
+    """
+    try:
+        with wave.open(audio_path, 'rb') as wf:
+            # Read audio data
+            frames = wf.readframes(wf.getnframes())
+            # Convert to numpy array
+            audio_data = np.frombuffer(frames, dtype=np.int16)
+            
+            # Normalize to [-1, 1]
+            audio_data = audio_data.astype(np.float32) / 32768.0
+            
+            # Calculate RMS (Root Mean Square) energy
+            rms = np.sqrt(np.mean(audio_data**2))
+            
+            # Check if RMS is above threshold
+            return rms > threshold
+    except Exception as e:
+        st.error(f"Error checking audio: {e}")
+        return False
 
 @st.cache_resource
 def load_asr(model_name):
@@ -100,47 +126,56 @@ if wav_audio_data is not None and wav_audio_data != st.session_state.get("last_a
 
     # Process and respond
     with st.spinner("Thinking..."):
-        # 1. Transcribe speech with options to reduce hallucination
-        result = asr_model.transcribe(
-            tmp_path, 
-            fp16=False,
-            language="en",  # Specify language to reduce hallucination
-            condition_on_previous_text=False,  # Don't use context from previous audio
-            temperature=0.0  # Use greedy decoding for more deterministic results
-        )
-        text = result["text"].strip()
+        # 1. Check if audio actually contains speech (not just silence)
+        has_speech = check_audio_has_speech(tmp_path, threshold=0.01)
         
-        # 2. Check if audio is too short or text is too generic (hallucination indicators)
-        audio_size = len(wav_audio_data)
-        hallucination_phrases = [
-            "thank you", "thanks for watching", "bye", "goodbye",
-            ".", "", "you", "the", "a"
-        ]
-        
-        # If audio is very small (less than 10KB) or text is a hallucination phrase
-        if audio_size < 10000 or text.lower() in hallucination_phrases or len(text) < 2:
+        if not has_speech:
             st.session_state.messages.append({
                 "role": "assistant", 
                 "content": "I didn't hear anything. Please speak clearly and try again."
             })
-        elif text:
-            # 3. Predict emotion
-            preds = emotion_pipe(tmp_path)
-            preds = sorted(preds, key=lambda x: x['score'], reverse=True)
-            top_pred = preds[0]
-            emotion = f"**{top_pred['label']}**"
-
-            # 4. Formulate response
-            bot_reply = f"I sense you might be feeling {emotion}."
-            
-            # 5. Update chat history
-            st.session_state.messages.append({"role": "user", "content": text})
-            st.session_state.messages.append({"role": "assistant", "content": bot_reply})
         else:
-            st.session_state.messages.append({
-                "role": "assistant", 
-                "content": "I couldn't understand that. Please try again."
-            })
+            # 2. Transcribe speech with options to reduce hallucination
+            result = asr_model.transcribe(
+                tmp_path, 
+                fp16=False,
+                language="en",
+                condition_on_previous_text=False,
+                temperature=0.0,
+                no_speech_threshold=0.6  # Higher = more aggressive at detecting silence
+            )
+            text = result["text"].strip()
+            
+            # 3. Check if text is too generic (hallucination indicators)
+            hallucination_phrases = [
+                "thank you", "thanks for watching", "bye", "goodbye",
+                ".", "", "you", "the", "a", "uh", "um", "hmm"
+            ]
+            
+            # If text is a hallucination phrase or too short
+            if text.lower() in hallucination_phrases or len(text) < 3:
+                st.session_state.messages.append({
+                    "role": "assistant", 
+                    "content": "I didn't catch that clearly. Could you please repeat?"
+                })
+            elif text:
+                # 4. Predict emotion
+                preds = emotion_pipe(tmp_path)
+                preds = sorted(preds, key=lambda x: x['score'], reverse=True)
+                top_pred = preds[0]
+                emotion = f"**{top_pred['label']}**"
+
+                # 5. Formulate response
+                bot_reply = f"I sense you might be feeling {emotion}."
+                
+                # 6. Update chat history
+                st.session_state.messages.append({"role": "user", "content": text})
+                st.session_state.messages.append({"role": "assistant", "content": bot_reply})
+            else:
+                st.session_state.messages.append({
+                    "role": "assistant", 
+                    "content": "I couldn't understand that. Please try again."
+                })
 
     # Clean up the temporary file
     os.remove(tmp_path)

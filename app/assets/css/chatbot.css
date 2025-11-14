@@ -22,59 +22,56 @@ html body div.stApp div[data-testid="stAppViewContainer"] > section.main,
     color: #1a237e !important;
 }
 
-/* --- Chat Messages Styling --- */
+/* --- Chat Messages Styling (for st.chat_message) --- */
 
-/* Reset and align the message container */
-div[data-testid="stChatMessage"] {
+/* Target the chat message container */
+.stChatMessage {
     display: flex !important;
     align-items: center !important;
-    gap: 0.25rem !important; /* Reduced gap */
+    gap: 0.5rem !important;
     margin-bottom: 1rem !important;
     padding: 0 !important;
     background-color: transparent !important;
+    border: none !important;
 }
 
-/* The content bubble */
-div[data-testid="stChatMessage"] > div:last-child {
+/* Target the content area inside chat message */
+.stChatMessage [data-testid="stChatMessageContent"] {
     padding: 0.8rem 1.2rem !important;
     border-radius: 20px !important;
     max-width: 75% !important;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
-    margin: 0 !important; /* Remove any margin */
 }
 
 /* Assistant messages - Blue Gradient */
-div[data-testid="stChatMessage"][data-testid*="assistant"] > div:last-child,
-div[data-testid="stChatMessage"]:has(img[alt="🤖"]) > div:last-child {
+.stChatMessage.assistant [data-testid="stChatMessageContent"] {
     background: linear-gradient(to right, #1976d2, #0d47a1) !important;
     border-top-left-radius: 5px !important;
 }
 
 /* Assistant text - White */
-div[data-testid="stChatMessage"][data-testid*="assistant"] p,
-div[data-testid="stChatMessage"][data-testid*="assistant"] span,
-div[data-testid="stChatMessage"]:has(img[alt="🤖"]) p,
-div[data-testid="stChatMessage"]:has(img[alt="🤖"]) span {
+.stChatMessage.assistant [data-testid="stChatMessageContent"] p,
+.stChatMessage.assistant [data-testid="stChatMessageContent"] span,
+.stChatMessage.assistant [data-testid="stChatMessageContent"] strong,
+.stChatMessage.assistant [data-testid="stChatMessageContent"] em {
     color: #FFFFFF !important;
 }
 
 /* User messages - Gray Background */
-div[data-testid="stChatMessage"][data-testid*="user"],
-div[data-testid="stChatMessage"]:has(img[alt="😊"]) {
+.stChatMessage.user {
     flex-direction: row-reverse !important;
 }
 
-div[data-testid="stChatMessage"][data-testid*="user"] > div:last-child,
-div[data-testid="stChatMessage"]:has(img[alt="😊"]) > div:last-child {
-    background-color: #f0f2f6 !important;
+.stChatMessage.user [data-testid="stChatMessageContent"] {
+    background-color: #343535 !important;
     border-top-right-radius: 5px !important;
 }
 
 /* User text - Black */
-div[data-testid="stChatMessage"][data-testid*="user"] p,
-div[data-testid="stChatMessage"][data-testid*="user"] span,
-div[data-testid="stChatMessage"]:has(img[alt="😊"]) p,
-div[data-testid="stChatMessage"]:has(img[alt="😊"]) span {
+.stChatMessage.user [data-testid="stChatMessageContent"] p,
+.stChatMessage.user [data-testid="stChatMessageContent"] span,
+.stChatMessage.user [data-testid="stChatMessageContent"] strong,
+.stChatMessage.user [data-testid="stChatMessageContent"] em {
     color: #111827 !important;
 }
 
