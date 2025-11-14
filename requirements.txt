@@ -7,3 +7,5 @@ torchaudio
 sentencepiece
 whisper
 transformers
+toml
+numpy

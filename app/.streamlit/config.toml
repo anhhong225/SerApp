@@ -1,5 +1,6 @@
 [server]
-baseUrlPath = "app"
+headless = true
+port = 8501
+
 [theme]
-# Set the base theme to "light" so your custom CSS works as expected.
-base="light"
+base = "light"
