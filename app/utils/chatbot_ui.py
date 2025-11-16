@@ -3,31 +3,23 @@ from pathlib import Path
 import time
 
 def load_css(*css_files):
-    """
-    Load one or more CSS files from the assets/css folder with cache busting
-    """
-    assets_dir = Path(__file__).parent.parent / "assets" / "css"
-    
-    # Add timestamp to force browser reload
+    assets_dir = (Path(__file__).parent.parent.parent / "app" / "assets" / "css").resolve()
+
     timestamp = int(time.time())
-    
+
     for css_file in css_files:
         css_path = assets_dir / css_file
-        
+
         if css_path.exists():
-            try:
-                with open(css_path, encoding='utf-8') as f:
-                    css_content = f.read()
-                
-                # Inject with timestamp comment to bypass cache
-                st.markdown(
-                    f"<style>/* {css_file} - {timestamp} */\n{css_content}</style>", 
-                    unsafe_allow_html=True
-                )
-            except Exception as e:
-                st.error(f"Error loading CSS {css_file}: {e}")
+            with open(css_path, encoding='utf-8') as f:
+                css_content = f.read()
+
+            st.markdown(
+                f"<style>/* {css_file} - {timestamp} */\n{css_content}</style>",
+                unsafe_allow_html=True,
+            )
         else:
-            st.warning(f"CSS file not found: {css_file}")
+            st.warning(f"CSS file not found: {css_path}")
 
 def render_chat_header(title: str, subtitle: str):
     """Render the chat header with title and subtitle"""

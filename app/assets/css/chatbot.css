@@ -1,90 +1,175 @@
-/* ==================== CHATBOT PAGE - LIGHT THEME ==================== */
+/* ==========================================================================
+   GLOBAL RESET
+   ========================================================================== */
 
-/* White background */
-html body div.stApp div[data-testid="stAppViewContainer"] > section.main,
-.stApp .main {
+/* Remove default bubble background applied by Streamlit */
+[data-testid="stChatMessageContent"] {
+    background: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+
+/* ==========================================================================
+   BASE PAGE COLORS (Light & Dark mode)
+   Streamlit applies a [data-theme] attribute automatically.
+   ========================================================================== */
+
+/* Light theme */
+[data-theme="light"] body {
     background-color: #ffffff !important;
-}
-
-/* Headings - Dark Blue */
-.stApp .main h1,
-.stApp .main h2,
-.stApp .main h3 {
-    color: #0d47a1 !important;
-}
-
-/* Markdown & Normal Text - Blue-Black */
-.stApp .main p,
-.stApp .main li,
-.stApp .main span,
-.stApp .main div[data-testid="stMarkdownContainer"] p,
-.stApp .main div[data-testid="stMarkdownContainer"] li {
     color: #1a237e !important;
 }
 
-/* --- Chat Messages Styling (for st.chat_message) --- */
+/* Dark theme */
+[data-theme="dark"] body {
+    background-color: #0b0f19 !important;
+    color: #e3e7ff !important;
+}
 
-/* Target the chat message container */
-.stChatMessage {
+
+/* ==========================================================================
+   MESSAGE ROW LAYOUT
+   ========================================================================== */
+
+[data-testid="stChatMessage"] {
     display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-    margin-bottom: 1rem !important;
-    padding: 0 !important;
-    background-color: transparent !important;
-    border: none !important;
+    align-items: flex-start !important;
+    gap: 0.6rem !important;
+    margin-bottom: 1.1rem !important;
+
+    /* Fade-in animation */
+    animation: fadeIn 0.35s ease-out;
 }
 
-/* Target the content area inside chat message */
-.stChatMessage [data-testid="stChatMessageContent"] {
-    padding: 0.8rem 1.2rem !important;
-    border-radius: 20px !important;
-    max-width: 75% !important;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+/* Animation: fade-in upward */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Assistant messages - Blue Gradient */
-.stChatMessage.assistant [data-testid="stChatMessageContent"] {
-    background: linear-gradient(to right, #1976d2, #0d47a1) !important;
-    border-top-left-radius: 5px !important;
+
+/* ==========================================================================
+   AVATAR STYLING
+   ========================================================================== */
+
+[data-testid="chatAvatarIcon-user"],
+[data-testid="chatAvatarIcon-assistant"] {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px !important;
 }
 
-/* Assistant text - White */
-.stChatMessage.assistant [data-testid="stChatMessageContent"] p,
-.stChatMessage.assistant [data-testid="stChatMessageContent"] span,
-.stChatMessage.assistant [data-testid="stChatMessageContent"] strong,
-.stChatMessage.assistant [data-testid="stChatMessageContent"] em {
-    color: #FFFFFF !important;
+/* Rounded emoji-like avatar background */
+[data-testid="chatAvatarIcon-user"] {
+    background-color: #ffe082 !important;   /* soft yellow */
 }
 
-/* User messages - Gray Background */
-.stChatMessage.user {
-    flex-direction: row-reverse !important;
+[data-testid="chatAvatarIcon-assistant"] {
+    background-color: #90caf9 !important;   /* soft blue */
 }
 
-.stChatMessage.user [data-testid="stChatMessageContent"] {
-    background-color: #343535 !important;
-    border-top-right-radius: 5px !important;
+
+/* ==========================================================================
+   BUBBLE BASE STYLE (both user and assistant)
+   ========================================================================== */
+
+.bubble {
+    padding: 0.9rem 1.2rem !important;
+    max-width: 70% !important;
+    border-radius: 22px !important;
+    font-size: 1rem !important;
+    line-height: 1.4 !important;
+    display: inline-block !important;
 }
 
-/* User text - Black */
-.stChatMessage.user [data-testid="stChatMessageContent"] p,
-.stChatMessage.user [data-testid="stChatMessageContent"] span,
-.stChatMessage.user [data-testid="stChatMessageContent"] strong,
-.stChatMessage.user [data-testid="stChatMessageContent"] em {
+
+/* ==========================================================================
+   USER BUBBLE (left)
+   ========================================================================== */
+
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
+  [data-testid="stChatMessageContent"] > div:first-child {
+
+    background: #f3f4f6 !important;
     color: #111827 !important;
+
+    /* iMessage style rounded */
+    border-radius: 22px !important;
+    border-bottom-left-radius: 6px !important;
+
+    padding: 0.9rem 1.2rem !important;
+    max-width: 70% !important;
 }
 
-/* Audio recorder container */
+/* Dark mode */
+[data-theme="dark"] [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
+  [data-testid="stChatMessageContent"] > div:first-child {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+}
+
+
+/* ==========================================================================
+   ASSISTANT BUBBLE (right)
+   ========================================================================== */
+
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+    justify-content: flex-end !important;
+}
+
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"])
+  [data-testid="stChatMessageContent"] > div:first-child {
+
+    background: linear-gradient(135deg, #1976d2, #0d47a1) !important;
+    color: #ffffff !important;
+
+    /* iMessage style rounded */
+    border-radius: 22px !important;
+    border-bottom-right-radius: 6px !important;
+
+    padding: 0.9rem 1.2rem !important;
+    max-width: 70% !important;
+}
+
+/* Dark mode gradient */
+[data-theme="dark"] [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"])
+  [data-testid="stChatMessageContent"] > div:first-child {
+    background: linear-gradient(135deg, #64b5f6, #1e88e5) !important;
+    color: #ffffff !important;
+}
+
+
+/* ==========================================================================
+   AUDIO RECORDER AREA STYLING
+   ========================================================================== */
+
 .stApp .main .element-container:has(iframe[title="st_audiorec.st_audiorec"]) {
     position: sticky;
     bottom: 0;
-    background: linear-gradient(to right, #1976d2, #0d47a1);
     padding: 20px;
-    margin: 0 -2rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
     border-top: 2px solid #0d47a1;
-    z-index: 99;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 999;
+
+    /* Light gradient */
+    background: linear-gradient(to right, #1976d2, #0d47a1) !important;
+
+    /* In dark mode -> softer */
+    [data-theme="dark"] & {
+        background: linear-gradient(to right, #0d47a1, #0a2859) !important;
+    }
+}
+
+
+/* ==========================================================================
+   OPTIONAL: Message Text Improvements
+   ========================================================================== */
+
+[data-testid="stChatMessageContent"] p {
+    margin: 0 !important;
 }

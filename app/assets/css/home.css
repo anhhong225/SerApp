@@ -61,3 +61,131 @@ html body div.stApp div[data-testid="stAppViewContainer"] > section.main,
 .stApp .stAlert * {
     color: #0d47a1 !important;
 }
+
+/* Responsive header */
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  margin-bottom: 0.5rem;
+}
+.hero-logo {
+  width: clamp(36px, 6vw, 80px);
+  height: auto;
+  border-radius: 8px;
+  flex: 0 0 auto;
+}
+.hero-title {
+  font-size: clamp(28px, 4vw + 8px, 60px);
+  line-height: 1.1;
+  margin: 0;
+}
+
+/* Application area rows */
+.app-area-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.app-area-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+}
+
+.app-area-content {
+  flex: 1;
+  min-width: 0; /* Allow text to wrap */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.app-area-title {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.app-area-desc {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Emotion rows */
+.emotion-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.emotion-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+}
+
+.emotion-content {
+  flex: 1;
+  min-width: 0; /* Allow text to wrap */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.emotion-name {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.emotion-desc {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .app-area-row,
+  .emotion-row {
+    gap: 8px;
+  }
+  
+  .app-area-title,
+  .emotion-name {
+    font-size: 15px;
+  }
+  
+  .app-area-desc,
+  .emotion-desc {
+    font-size: 13px;
+  }
+}
+
+/* Fix column wrapping on small screens */
+@media (max-width: 768px) {
+  /* Force rows to stack vertically on mobile */
+  [data-testid="column"] {
+    min-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+  
+  /* Remove flex from the inner divs so text flows naturally */
+  div[style*="display:flex"] {
+    display: block !important;
+    height: auto !important;
+  }
+  
+  /* Add spacing between stacked items */
+  [data-testid="column"] + [data-testid="column"] {
+    margin-top: 0.5rem;
+  }
+}
