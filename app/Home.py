@@ -31,7 +31,7 @@ with col2:
 st.markdown("""
 ## Welcome to the Emotion Recognition Application
 
-Speech Emotion Recognition (SER) is a crucial technology that enables computers to understand human emotions through voice analysis. This capability has transformative applications across multiple domains.
+Speech Emotion Recognition (SER) is more than just a technical innovation — it has meaningful social, healthcare, economic, and educational impact. By enabling machines to understand human emotions, SER contributes to a future where technology is empathetic, inclusive, and supportive.
 
 ---
 
@@ -45,8 +45,8 @@ app_areas = [
     ("mental-health.png", "Mental Health Support", "Early detection of stress, depression, or anxiety in patient monitoring systems"),
     ("customer-service.png", "Customer Service", "Real-time sentiment analysis to improve customer satisfaction and agent performance"),
     ("education.png", "Education", "Adaptive learning systems that respond to student frustration or confusion"),
-    ("automotive.png", "Automotive Safety", "Detecting driver stress or fatigue to prevent accidents"),
-    ("ai-assistant.png", "Human-Computer Interaction", "Creating more empathetic and responsive AI assistants"),
+    ("automative.png", "Automotive Safety", "Detecting driver stress or fatigue to prevent accidents"),
+    ("assistant.png", "Human-Computer Interaction", "Creating more empathetic and responsive AI assistants"),
     ("entertainment.png", "Entertainment", "Emotion-aware gaming and interactive media experiences"),
 ]
 
@@ -199,8 +199,8 @@ Follow these simple steps to test the emotion recognition model:
 
 This application is organized into several sections:
 
-- **🏠 Home** (Current Page): Project introduction and instructions
-- **🎤 Prediction**: Interactive emotion recognition chatbot
+- **Home** (Current Page): Project introduction and instructions
+- **Prediction**: Interactive emotion recognition chatbot
 
 ---
 
@@ -223,7 +223,7 @@ This application is organized into several sections:
 
 ---
 
-*Experience the power of AI-driven emotion recognition—start your journey now by clicking Prediction in the sidebar!* ✨
+*Experience the power of AI-driven emotion recognition—start your journey now by clicking Prediction in the sidebar!*
 """)
 
 st.sidebar.success("Select **Prediction** to test the model!")
