@@ -1,0 +1,91 @@
+/* Global layout tweaks */
+.main .block-container {
+  padding-top: 1.2rem;
+  padding-bottom: 2rem;
+  max-width: 1200px;
+}
+
+/* Headings */
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+h2 {
+  font-size: 1.4rem;
+  margin-top: 1rem;
+}
+h3 {
+  font-size: 1.1rem;
+  margin-top: 0.8rem;
+}
+
+/* Horizontal rule spacing */
+hr {
+  margin: 0.8rem 0 1rem 0;
+}
+
+/* Info, success, warning boxes */
+.stAlert {
+  border-radius: 8px !important;
+}
+.stAlert > div {
+  font-size: 0.95rem;
+}
+
+/* Code blocks */
+pre, code {
+  font-size: 0.9rem !important;
+  line-height: 1.4;
+}
+.stCodeBlock {
+  border-radius: 8px;
+}
+
+/* Images */
+img {
+  border-radius: 8px;
+}
+
+/* Metrics */
+[data-testid="stMetric"] {
+  border-radius: 8px;
+  padding: 8px;
+  background: #f7f7f9;
+}
+[data-testid="stMetric"] > div:nth-child(1) {
+  font-size: 0.9rem;
+  color: #666;
+}
+[data-testid="stMetric"] > div:nth-child(2) {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Tabs */
+.stTabs [role="tablist"] {
+  gap: 6px;
+}
+.stTabs [role="tab"] {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fafafa;
+}
+.stTabs [role="tab"][aria-selected="true"] {
+  background: #e9f3ff;
+  color: #0b70d6;
+  font-weight: 600;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] .block-container {
+  padding-top: 1rem;
+}
+section[data-testid="stSidebar"] .stAlert {
+  margin-bottom: 0.6rem;
+}
+
+/* Page caption */
+footer {
+  font-size: 0.85rem;
+  color: #777;
+}

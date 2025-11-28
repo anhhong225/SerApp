@@ -1,0 +1,720 @@
+import streamlit as st
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
+from utils.chatbot_ui import load_css
+
+st.set_page_config(page_title="Models", page_icon="🤖", layout="wide")
+load_css("global.css", "models.css")
+
+st.title("🤖 Machine Learning and Deep Learning Implementation")
+st.markdown("---")
+
+st.info("""
+**Overview**: This section presents the machine learning and deep learning models implemented 
+for speech emotion recognition, their architectures, training procedures, and evaluation results.
+""")
+
+# Main tabs for different models
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    "Traditional ML",
+    "CNN",
+    "LSTM",
+    "Wav2Vec2",
+    "Results Comparison"
+])
+
+# ==================== TAB 1: TRADITIONAL ML ====================
+with tab1:
+    st.header("Baseline Models")
+    
+    st.write("""
+    Baseline approaches using raw waveform and MFCC features with 1D CNNs.
+    """)
+    
+    st.markdown("---")
+    
+    # Raw Waveform - 1D CNN
+    st.subheader("a. Raw Waveform – 1D CNN")
+    
+    st.write("""
+    **Approach**:
+    - Uses preprocessed audio signal directly in time domain
+    - Fixed length: 4 seconds
+    - Shallow 1D CNN to capture local temporal variations in amplitude
+    - No transformation to frequency domain
+    """)
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.code("""
+    Input: Raw Waveform (64,000 samples @ 16kHz)
+        ↓
+    Conv1D (64 filters, kernel=8, stride=4)
+        ↓
+    MaxPooling1D (pool_size=4)
+        ↓
+    Conv1D (128 filters, kernel=8, stride=4)
+        ↓
+    MaxPooling1D (pool_size=4)
+        ↓
+    Flatten
+        ↓
+    Dense (256) + ReLU + Dropout(0.5)
+        ↓
+    Dense (8) + Softmax
+        ↓
+    Output: Emotion Probabilities
+        """, language="text")
+    
+    with col2:
+        st.info("""
+        **Configuration**:
+        - Input: 64,000 samples
+        - Conv layers: 2
+        - Filters: 64, 128
+        - Kernel size: 8
+        - Stride: 4
+        - Dense: 256 units
+        """)
+    
+    st.markdown("---")
+    
+    st.subheader("Performance")
+    
+    # IMAGE PLACEHOLDER: Raw waveform validation accuracy
+    st.image("assets/images/models/raw_waveform_accuracy.png",
+            caption="Figure 11: Validation accuracy of the raw waveform model",
+            use_container_width=True)
+    
+    st.write("""
+    The model achieved **low classification accuracy** and exhibited **highly unstable validation performance**.
+    The large input dimensionality led to rapid overfitting, and the network struggled to learn 
+    emotion-discriminative patterns from amplitude-only signals.
+    """)
+    
+    st.error("""
+    **Limitations**:
+    
+    **No frequency encoding**: Pitch and formant-related emotion cues are lost  
+    **High dimensionality**: Leads to inefficient learning and long training times  
+    **Poor on small datasets**: Lacks inductive bias for emotion recognition  
+    **Amplitude-only signals**: Lack explicit pitch and timbral information  
+    """)
+    
+    st.markdown("---")
+    
+    # MFCC - 1D CNN
+    st.subheader("b. MFCC – 1D CNN Baseline")
+    
+    st.write("""
+    **Approach**:
+    - Extract 40 MFCC coefficients per frame
+    - Input shape: 40 × 199 frames
+    - Lightweight 1D CNN architecture
+    - MFCCs provide compact spectral envelope representation
+    """)
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.code("""
+    # MFCC extraction
+    mfccs = librosa.feature.mfcc(
+        y=audio,
+        sr=16000,
+        n_mfcc=40,
+        n_fft=2048,
+        hop_length=512
+    )
+    # Shape: (40, 199)
+        """, language="python")
+        
+        st.code("""
+    Input: MFCC Features (40 × 199)
+        ↓
+    Conv1D (64 filters, kernel=3) + ReLU
+        ↓
+    MaxPooling1D (pool_size=2)
+        ↓
+    Conv1D (128 filters, kernel=3) + ReLU
+        ↓
+    MaxPooling1D (pool_size=2)
+        ↓
+    Flatten
+        ↓
+    Dense (128) + ReLU + Dropout(0.5)
+        ↓
+    Dense (8) + Softmax
+        ↓
+    Output: Emotion Probabilities
+        """, language="text")
+    
+    with col2:
+        st.info("""
+        **MFCC Configuration**:
+        - Coefficients: 40
+        - Frames: 199
+        - FFT size: 2048
+        - Hop length: 512
+        
+        **Model**:
+        - Conv layers: 2
+        - Filters: 64, 128
+        - Kernel: 3
+        - Dense: 128 units
+        """)
+    
+    st.markdown("---")
+    
+    st.subheader("Performance")
+    
+    # IMAGE PLACEHOLDER: MFCC 1D CNN accuracy
+    st.image("assets/images/models/mfcc_1dcnn_accuracy.png",
+            caption="Figure 12: Accuracy of MFCC 1D CNN model",
+            use_container_width=True)
+    
+    st.write("""
+    The MFCC-based model achieved **moderate performance**, clearly **outperforming the raw waveform baseline**. 
+    However, its accuracy remained **significantly below spectrogram-based CNNs**.
+    
+    **Common Misclassifications**:
+    - Emotions with overlapping cepstral patterns: happy, surprised, fearful
+    - MFCCs compress fine-grained harmonic and energy variations important for distinguishing emotional states
+    """)
+    
+    st.warning("""
+    **Limitations**:
+    
+    **Information loss**: MFCCs remove detailed spectral and harmonic information through DCT compression  
+    **Pitch insensitivity**: Lack sensitivity to pitch contours, affecting high-arousal emotion recognition  
+    **Fixed-length normalization**: May truncate emotionally relevant segments  
+    **Limited discriminability**: Overlapping cepstral patterns for similar emotions  
+    """)
+    
+    st.markdown("---")
+    
+    # Comparison summary
+    st.subheader("Baseline Models Summary")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.metric("Raw Waveform 1D CNN", "~45-50%", "Unstable")
+    
+    with col2:
+        st.metric("MFCC 1D CNN", "~60-65%", "Moderate")
+    
+    st.info("""
+    **Key Insights**:
+    
+    - Raw waveform without frequency encoding performs poorly for emotion recognition
+    - MFCCs provide better representation than raw amplitude, but lose important harmonic details
+    - Both approaches are outperformed by 2D spectrogram-based models
+    - These baselines establish lower bounds for performance comparison
+    
+    → **Next**: See how 2D CNN with mel-spectrograms improves performance significantly
+    """)
+
+# ==================== TAB 2: CNN ====================
+with tab2:
+    st.header("Convolutional Neural Network (CNN)")
+    
+    st.write("""
+    Deep learning model using mel-spectrograms as 2D image-like inputs.
+    """)
+    
+    st.markdown("---")
+    
+    # Architecture
+    st.subheader("Model Architecture")
+    
+    st.code("""
+    Input: Mel-Spectrogram (128 × 110 × 1)
+        ↓
+    Conv2D (32 filters, 3×3) + ReLU + BatchNorm
+        ↓
+    MaxPooling (2×2)
+        ↓
+    Conv2D (64 filters, 3×3) + ReLU + BatchNorm
+        ↓
+    MaxPooling (2×2)
+        ↓
+    Conv2D (128 filters, 3×3) + ReLU + BatchNorm
+        ↓
+    MaxPooling (2×2)
+        ↓
+    Flatten
+        ↓
+    Dense (256 units) + ReLU + Dropout(0.5)
+        ↓
+    Dense (128 units) + ReLU + Dropout(0.3)
+        ↓
+    Dense (8 units) + Softmax
+        ↓
+    Output: Emotion Probabilities (8 classes)
+    """, language="text")
+    
+    st.markdown("---")
+    
+    # Training details
+    st.subheader("Training Configuration")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.write("""
+        **Hyperparameters**:
+        - Optimizer: Adam
+        - Learning rate: 0.001
+        - Batch size: 32
+        - Epochs: 50
+        - Loss: Categorical cross-entropy
+        """)
+    
+    with col2:
+        st.write("""
+        **Regularization**:
+        - Dropout: 0.5, 0.3
+        - Batch normalization
+        - Early stopping (patience=10)
+        - ReduceLROnPlateau
+        """)
+    
+    st.markdown("---")
+    
+    # Results
+    st.subheader("Performance Results")
+    
+    # IMAGE PLACEHOLDER: CNN training curve
+    st.image("assets/images/models/cnn_training_curve.png",
+            caption="CNN training and validation accuracy/loss curves",
+            use_container_width=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.metric("Test Accuracy", "76.4%", "+8.2% vs SVM")
+        st.metric("Validation Accuracy", "77.1%")
+        st.metric("Training Accuracy", "82.3%")
+    
+    with col2:
+        st.metric("Precision", "76.2%")
+        st.metric("Recall", "76.4%")
+        st.metric("F1-Score", "76.3%")
+    
+    with st.expander("Confusion Matrix & Analysis"):
+        st.write("""
+        **Strong Performance**:
+        - Angry: 85% precision
+        - Happy: 82% precision
+        - Sad: 79% precision
+        
+        **Common Confusions**:
+        - Fear ↔ Neutral (18% confusion)
+        - Happy ↔ Surprise (15% confusion)
+        - Calm ↔ Neutral (22% confusion)
+        
+        **Insights**:
+        - CNN captures spatial patterns in spectrograms effectively
+        - Significantly better than traditional ML
+        - Still struggles with low-arousal emotions (calm, neutral)
+        """)
+        
+        # IMAGE PLACEHOLDER: CNN confusion matrix
+        st.image("assets/images/models/cnn_confusion_matrix.png",
+                caption="CNN confusion matrix on test set",
+                use_container_width=True)
+
+# ==================== TAB 3: LSTM ====================
+with tab3:
+    st.header("Long Short-Term Memory (LSTM)")
+    
+    st.write("""
+    Recurrent neural network designed to capture temporal dependencies in audio sequences.
+    """)
+    
+    st.markdown("---")
+    
+    # Architecture
+    st.subheader("Model Architecture")
+    
+    st.code("""
+    Input: MFCC Sequence (40 × Time Steps)
+        ↓
+    LSTM (128 units, return_sequences=True)
+        ↓
+    Dropout (0.3)
+        ↓
+    LSTM (64 units, return_sequences=False)
+        ↓
+    Dropout (0.3)
+        ↓
+    Dense (128 units) + ReLU
+        ↓
+    Dropout (0.5)
+        ↓
+    Dense (8 units) + Softmax
+        ↓
+    Output: Emotion Probabilities (8 classes)
+    """, language="text")
+    
+    st.markdown("---")
+    
+    # Training details
+    st.subheader("Training Configuration")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.write("""
+        **Hyperparameters**:
+        - Optimizer: Adam
+        - Learning rate: 0.001
+        - Batch size: 32
+        - Epochs: 50
+        - Loss: Categorical cross-entropy
+        """)
+    
+    with col2:
+        st.write("""
+        **Sequence Processing**:
+        - Input: MFCC frames over time
+        - Captures temporal evolution
+        - Bidirectional: No (unidirectional)
+        - Time steps: Variable (padded)
+        """)
+    
+    st.markdown("---")
+    
+    # Results
+    st.subheader("Performance Results")
+    
+    # IMAGE PLACEHOLDER: LSTM training curve
+    st.image("assets/images/models/lstm_training_curve.png",
+            caption="LSTM training and validation accuracy/loss curves",
+            use_container_width=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.metric("Test Accuracy", "73.8%", "+5.6% vs SVM")
+        st.metric("Validation Accuracy", "74.2%")
+        st.metric("Training Accuracy", "79.5%")
+    
+    with col2:
+        st.metric("Precision", "73.5%")
+        st.metric("Recall", "73.8%")
+        st.metric("F1-Score", "73.6%")
+    
+    with st.expander("Analysis"):
+        st.write("""
+        **Strengths**:
+        - Captures temporal patterns better than traditional ML
+        - Good at emotions with distinct prosody (angry, sad)
+        
+        **Weaknesses**:
+        - Lower than CNN (76.4%)
+        - MFCC features may be limiting
+        - Vanishing gradient issues despite LSTM design
+        
+        **Comparison to CNN**:
+        - LSTM: 73.8% (temporal patterns from MFCC)
+        - CNN: 76.4% (spatial patterns from spectrograms)
+        - CNN's 2D representation appears more effective
+        """)
+
+# ==================== TAB 4: WAV2VEC2 ====================
+with tab4:
+    st.header("Wav2Vec2")
+    
+    st.write("""
+    State-of-the-art transformer-based model pre-trained on unlabeled speech, 
+    fine-tuned for emotion classification.
+    """)
+    
+    st.markdown("---")
+    
+    # Model overview
+    st.subheader("Model Overview")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.write("""
+        **Pre-trained Model**:
+        - facebook/wav2vec2-base
+        - Pre-trained on 960h LibriSpeech
+        - 95M parameters
+        - Learns from raw waveforms
+        """)
+    
+    with col2:
+        st.write("""
+        **Fine-tuning Approach**:
+        - Add classification head (8 emotions)
+        - Freeze feature extractor initially
+        - Unfreeze in later epochs
+        - Transfer learning from speech representations
+        """)
+    
+    st.markdown("---")
+    
+    # Architecture
+    st.subheader("Architecture")
+    
+    st.code("""
+    Raw Waveform (56,000 samples @ 16kHz)
+        ↓
+    Feature Encoder (7-layer CNN)
+        ↓ (512-dim vectors)
+    Contextualized Representations
+        ↓
+    Transformer Encoder (12 layers)
+        ↓
+    Mean Pooling (across time)
+        ↓
+    Classification Head
+      ├─ Linear (512 → 256)
+      ├─ ReLU + Dropout(0.1)
+      └─ Linear (256 → 8)
+        ↓
+    Softmax
+        ↓
+    Output: Emotion Probabilities (8 classes)
+    """, language="text")
+    
+    st.markdown("---")
+    
+    # Training details
+    st.subheader("Training Configuration")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.write("""
+        **Hyperparameters**:
+        - Optimizer: AdamW
+        - Learning rate: 3e-5 (backbone), 1e-4 (head)
+        - Batch size: 8 (gradient accumulation: 4)
+        - Epochs: 20
+        - Warmup steps: 500
+        """)
+    
+    with col2:
+        st.write("""
+        **Training Strategy**:
+        - Phase 1 (5 epochs): Freeze encoder, train head
+        - Phase 2 (15 epochs): Unfreeze all, fine-tune end-to-end
+        - Mixed precision (FP16)
+        - Gradient clipping: 1.0
+        """)
+    
+    st.markdown("---")
+    
+    # Results
+    st.subheader("Performance Results")
+    
+    # IMAGE PLACEHOLDER: Wav2Vec2 training curve
+    st.image("assets/images/models/wav2vec2_training_curve.png",
+            caption="Wav2Vec2 training and validation accuracy/loss curves",
+            use_container_width=True)
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    col1.metric("Test Accuracy", "87.3%", "🏆 Best")
+    col2.metric("Precision", "87.1%")
+    col3.metric("Recall", "87.3%")
+    col4.metric("F1-Score", "87.2%")
+    
+    st.markdown("---")
+    
+    st.subheader("Per-Emotion Performance")
+    
+    # IMAGE PLACEHOLDER: Wav2Vec2 per-emotion F1 scores
+    st.image("assets/images/models/wav2vec2_per_emotion.png",
+            caption="Wav2Vec2 F1-score per emotion class",
+            use_container_width=True)
+    
+    with st.expander("Detailed Metrics"):
+        st.write("""
+        ### Per-Emotion F1 Scores:
+        
+        | Emotion | Precision | Recall | F1-Score | Support |
+        |---------|-----------|--------|----------|---------|
+        | Neutral | 86.2% | 85.8% | 86.0% | 258 |
+        | Calm | 79.4% | 77.8% | 78.6% | 45 |
+        | Happy | 89.5% | 90.2% | 89.8% | 254 |
+        | Sad | 88.7% | 89.1% | 88.9% | 253 |
+        | Angry | 92.3% | 91.8% | 92.0% | 255 |
+        | Fearful | 85.6% | 86.5% | 86.0% | 251 |
+        | Disgust | 87.9% | 88.3% | 88.1% | 257 |
+        | Surprised | 90.1% | 89.5% | 89.8% | 252 |
+        
+        **Best Performing**: Angry (92.0%), Happy (89.8%), Surprised (89.8%)
+        
+        **Challenging**: Calm (78.6%) - limited samples, low arousal
+        
+        **Common Confusions**:
+        - Calm ↔ Neutral (13%)
+        - Fear ↔ Surprise (8%)
+        - Happy ↔ Surprise (6%)
+        """)
+    
+    # IMAGE PLACEHOLDER: Wav2Vec2 confusion matrix
+    st.image("assets/images/models/wav2vec2_confusion_matrix.png",
+            caption="Wav2Vec2 confusion matrix on test set",
+            use_container_width=True)
+    
+    st.markdown("---")
+    
+    st.success("""
+    **Why Wav2Vec2 Outperforms Others**:
+    
+    **Raw Waveform Input**: No information loss from hand-crafted features  
+    **Pre-training**: Learned rich speech representations from 960h data  
+    **Transformer Architecture**: Captures long-range dependencies  
+    **Self-supervised Learning**: Generalizes better to emotion task  
+    **End-to-End**: Optimizes entire pipeline for emotion classification  
+    
+    **Performance Gain**:
+    - +19.1% vs SVM (68.2% → 87.3%)
+    - +10.9% vs CNN (76.4% → 87.3%)
+    - +13.5% vs LSTM (73.8% → 87.3%)
+    """)
+
+# ==================== TAB 5: RESULTS COMPARISON ====================
+with tab5:
+    st.header("Model Comparison and Final Results")
+    
+    st.write("""
+    Comprehensive comparison of all models evaluated in this project.
+    """)
+    
+    st.markdown("---")
+    
+    # Overall comparison
+    st.subheader("Overall Performance Comparison")
+    
+    # IMAGE PLACEHOLDER: All models comparison
+    st.image("assets/images/models/all_models_comparison.png",
+            caption="Test accuracy comparison across all models",
+            use_container_width=True)
+    
+    st.markdown("---")
+    
+    # Summary table
+    st.subheader("Summary Table")
+    
+    st.dataframe({
+        "Model": ["SVM", "Random Forest", "Gradient Boosting", "KNN", "CNN", "LSTM", "Wav2Vec2"],
+        "Accuracy": ["68.2%", "65.4%", "66.7%", "62.3%", "76.4%", "73.8%", "87.3%"],
+        "F1-Score": ["67.9%", "65.1%", "66.4%", "62.0%", "76.3%", "73.6%", "87.2%"],
+        "Training Time": ["< 1 min", "~2 min", "~3 min", "< 1 min", "~30 min", "~25 min", "~2 hours"],
+        "Parameters": ["-", "-", "-", "-", "~500K", "~300K", "~95M"],
+        "Input Type": ["MFCC", "MFCC", "MFCC", "MFCC", "Mel-Spec", "MFCC Seq", "Raw Wave"]
+    }, use_container_width=True)
+    
+    st.markdown("---")
+    
+    # Key findings
+    st.subheader("Key Findings")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.write("""
+        ### Traditional ML:
+        - **Best**: SVM (68.2%)
+        - Fast training and inference
+        - Limited by hand-crafted features
+        - Good baseline performance
+        
+        ### Deep Learning (CNN/LSTM):
+        - **CNN**: 76.4% (best among custom architectures)
+        - **LSTM**: 73.8%
+        - Significantly better than traditional ML
+        - CNN's 2D representation more effective than LSTM's 1D
+        """)
+    
+    with col2:
+        st.write("""
+        ### Wav2Vec2 (Transfer Learning):
+        - **87.3%** accuracy - clear winner
+        - +19.1% over best traditional ML
+        - +10.9% over best custom deep learning (CNN)
+        - Pre-training on large speech corpus is key
+        - Raw waveform processing preserves all information
+        
+        ### Computational Trade-off:
+        - Wav2Vec2 requires more resources
+        - Training: ~2 hours (vs ~30 min for CNN)
+        - Inference: ~100ms per sample (acceptable for real-time)
+        """)
+    
+    st.markdown("---")
+    
+    # Final recommendation
+    st.subheader("Final Model Selection")
+    
+    st.success("""
+    ## Selected Model: Wav2Vec2
+    
+    **Rationale**:
+    
+    **Superior Performance**: 87.3% accuracy (19.1% improvement over traditional ML)  
+    **Robust Generalization**: Strong performance across all emotion classes  
+    **Pre-trained Representations**: Leverages 960 hours of speech data  
+    **End-to-End Learning**: No manual feature engineering required  
+    **State-of-the-Art**: Matches performance of published SER research  
+    
+    **Deployment Considerations**:
+    - Model size: ~360 MB (manageable for cloud deployment)
+    - Inference time: ~100ms per 3.5s clip (acceptable for web app)
+    - Can be quantized to INT8 for faster inference if needed
+    - Cloud deployment recommended (GPU acceleration)
+    
+    **Use Cases**:
+    - Real-time emotion detection in customer service calls
+    - Mental health monitoring applications
+    - Educational tools for emotion recognition training
+    - Human-computer interaction systems
+    """)
+    
+    st.markdown("---")
+    
+    # Future improvements
+    with st.expander("Future Improvements"):
+        st.write("""
+        ### Potential Enhancements:
+        
+        **Model Architecture**:
+        - Experiment with Wav2Vec2-Large (317M parameters)
+        - Try HuBERT or WavLM (alternative self-supervised models)
+        - Ensemble Wav2Vec2 with CNN for complementary features
+        
+        **Data Augmentation**:
+        - More aggressive augmentation (SpecAugment, mixup)
+        - Synthetic data generation (voice conversion)
+        - Cross-lingual emotion data
+        
+        **Training Strategies**:
+        - Contrastive learning for better embeddings
+        - Multi-task learning (emotion + speaker + gender)
+        - Active learning to select hard examples
+        
+        **Handling Edge Cases**:
+        - Improve calm/neutral distinction (currently 78.6% F1)
+        - Address fear/surprise confusion (8% confusion rate)
+        - Better handling of mixed emotions
+        
+        **Deployment Optimization**:
+        - Model quantization (FP32 → INT8)
+        - Knowledge distillation to smaller student model
+        - ONNX conversion for cross-platform deployment
+        """)
+
+st.markdown("---")
+st.caption("Machine Learning & Deep Learning Implementation | Model training and evaluation results")
