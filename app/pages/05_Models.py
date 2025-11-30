@@ -28,305 +28,319 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 # ==================== TAB 1: TRADITIONAL ML ====================
 with tab1:
     st.header("Baseline Models")
-    
     st.write("""
     Baseline approaches using raw waveform and MFCC features with 1D CNNs.
     """)
-    
+
     st.markdown("---")
-    
-    # Raw Waveform - 1D CNN
-    st.subheader("a. Raw Waveform – 1D CNN")
-    
+
+    # Raw Waveform – 1D CNN
+    st.subheader("1. Raw Waveform – 1D CNN")
     st.write("""
-    **Approach**:
-    - Uses preprocessed audio signal directly in time domain
-    - Fixed length: 4 seconds
-    - Shallow 1D CNN to capture local temporal variations in amplitude
-    - No transformation to frequency domain
+    Uses the preprocessed audio signal directly in the time domain. All samples were standardized to 4 seconds, and a
+    shallow 1D CNN was applied to capture local temporal variations without frequency transformation.
     """)
-    
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        st.code("""
-    Input: Raw Waveform (64,000 samples @ 16kHz)
-        ↓
-    Conv1D (64 filters, kernel=8, stride=4)
-        ↓
-    MaxPooling1D (pool_size=4)
-        ↓
-    Conv1D (128 filters, kernel=8, stride=4)
-        ↓
-    MaxPooling1D (pool_size=4)
-        ↓
-    Flatten
-        ↓
-    Dense (256) + ReLU + Dropout(0.5)
-        ↓
-    Dense (8) + Softmax
-        ↓
-    Output: Emotion Probabilities
-        """, language="text")
-    
-    with col2:
-        st.info("""
-        **Configuration**:
-        - Input: 64,000 samples
-        - Conv layers: 2
-        - Filters: 64, 128
-        - Kernel size: 8
-        - Stride: 4
-        - Dense: 256 units
-        """)
-    
-    st.markdown("---")
-    
-    st.subheader("Performance")
-    
-    # IMAGE PLACEHOLDER: Raw waveform validation accuracy
-    st.image("assets/images/models/raw_waveform_accuracy.png",
+    st.write("""
+    The model achieved low accuracy and highly unstable validation performance (Figure 11). Large input dimensionality
+    led to rapid overfitting; amplitude-only signals lack explicit pitch/timbral information.
+    """)
+
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.image(
+            "assets/images/models/raw_waveform_accuracy.png",
             caption="Figure 11: Validation accuracy of the raw waveform model",
-            use_container_width=True)
-    
-    st.write("""
-    The model achieved **low classification accuracy** and exhibited **highly unstable validation performance**.
-    The large input dimensionality led to rapid overfitting, and the network struggled to learn 
-    emotion-discriminative patterns from amplitude-only signals.
-    """)
-    
+            use_container_width=True
+        )
+
+    # Bullet list (Markdown) for limitations
     st.error("""
-    **Limitations**:
-    
-    **No frequency encoding**: Pitch and formant-related emotion cues are lost  
-    **High dimensionality**: Leads to inefficient learning and long training times  
-    **Poor on small datasets**: Lacks inductive bias for emotion recognition  
-    **Amplitude-only signals**: Lack explicit pitch and timbral information  
+- Does not encode frequency structure; pitch and formant-related emotion cues are lost.
+- High dimensionality leads to inefficient learning and long training times.
+- Performs poorly on small datasets due to lack of inductive bias.
     """)
-    
+
     st.markdown("---")
-    
-    # MFCC - 1D CNN
-    st.subheader("b. MFCC – 1D CNN Baseline")
-    
+
+    # MFCC – 1D CNN
+    st.subheader("2. MFCC – 1D CNN")
     st.write("""
-    **Approach**:
-    - Extract 40 MFCC coefficients per frame
-    - Input shape: 40 × 199 frames
-    - Lightweight 1D CNN architecture
-    - MFCCs provide compact spectral envelope representation
+    MFCCs (40 × 199) were extracted per audio and used to train a lightweight 1D CNN. MFCCs compactly represent the
+    spectral envelope and are widely used in speech recognition.
     """)
-    
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        st.code("""
-    # MFCC extraction
-    mfccs = librosa.feature.mfcc(
-        y=audio,
-        sr=16000,
-        n_mfcc=40,
-        n_fft=2048,
-        hop_length=512
-    )
-    # Shape: (40, 199)
-        """, language="python")
-        
-        st.code("""
-    Input: MFCC Features (40 × 199)
-        ↓
-    Conv1D (64 filters, kernel=3) + ReLU
-        ↓
-    MaxPooling1D (pool_size=2)
-        ↓
-    Conv1D (128 filters, kernel=3) + ReLU
-        ↓
-    MaxPooling1D (pool_size=2)
-        ↓
-    Flatten
-        ↓
-    Dense (128) + ReLU + Dropout(0.5)
-        ↓
-    Dense (8) + Softmax
-        ↓
-    Output: Emotion Probabilities
-        """, language="text")
-    
-    with col2:
-        st.info("""
-        **MFCC Configuration**:
-        - Coefficients: 40
-        - Frames: 199
-        - FFT size: 2048
-        - Hop length: 512
-        
-        **Model**:
-        - Conv layers: 2
-        - Filters: 64, 128
-        - Kernel: 3
-        - Dense: 128 units
-        """)
-    
-    st.markdown("---")
-    
-    st.subheader("Performance")
-    
-    # IMAGE PLACEHOLDER: MFCC 1D CNN accuracy
-    st.image("assets/images/models/mfcc_1dcnn_accuracy.png",
-            caption="Figure 12: Accuracy of MFCC 1D CNN model",
-            use_container_width=True)
-    
     st.write("""
-    The MFCC-based model achieved **moderate performance**, clearly **outperforming the raw waveform baseline**. 
-    However, its accuracy remained **significantly below spectrogram-based CNNs**.
-    
-    **Common Misclassifications**:
-    - Emotions with overlapping cepstral patterns: happy, surprised, fearful
-    - MFCCs compress fine-grained harmonic and energy variations important for distinguishing emotional states
+    Achieved moderate performance, clearly better than raw waveform, but below spectrogram-based CNNs. Misclassifications
+    were common for emotions with overlapping cepstral patterns (happy, surprised, fearful) due to MFCC compression of
+    fine-grained harmonic/energy variations.
     """)
-    
+
+    m1, m2, m3 = st.columns([1, 2, 1])
+    with m2:
+        st.image(
+            "assets/images/models/mfcc_1dcnn_accuracy.png",
+            caption="Accuracy of MFCC 1D CNN model",
+            use_container_width=True
+        )
+
+    # Bullet list (Markdown) for limitations
     st.warning("""
-    **Limitations**:
-    
-    **Information loss**: MFCCs remove detailed spectral and harmonic information through DCT compression  
-    **Pitch insensitivity**: Lack sensitivity to pitch contours, affecting high-arousal emotion recognition  
-    **Fixed-length normalization**: May truncate emotionally relevant segments  
-    **Limited discriminability**: Overlapping cepstral patterns for similar emotions  
+- MFCCs remove detailed spectral and harmonic information through DCT compression.
+- Lack sensitivity to pitch contours, affecting recognition of high-arousal emotions.
+- Fixed-length normalization may truncate emotionally relevant segments.
     """)
-    
+
     st.markdown("---")
-    
-    # Comparison summary
-    st.subheader("Baseline Models Summary")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.metric("Raw Waveform 1D CNN", "~45-50%", "Unstable")
-    
-    with col2:
-        st.metric("MFCC 1D CNN", "~60-65%", "Moderate")
-    
-    st.info("""
-    **Key Insights**:
-    
-    - Raw waveform without frequency encoding performs poorly for emotion recognition
-    - MFCCs provide better representation than raw amplitude, but lose important harmonic details
-    - Both approaches are outperformed by 2D spectrogram-based models
-    - These baselines establish lower bounds for performance comparison
-    
-    → **Next**: See how 2D CNN with mel-spectrograms improves performance significantly
+
+    # Spectrogram-Based CNN Models
+    st.header("Spectrogram-Based CNN Models")
+    st.subheader("Fixed-Size Spectrogram CNN")
+    st.write("""
+    Log-Mel spectrograms (64 × 128) with standardized padding/truncation ensure consistent inputs. Three conv blocks
+    + max-pooling learn hierarchical time–frequency features; global average pooling + SoftMax produce final predictions.
     """)
+    st.info("""
+Performance overview:
+- Training accuracy: ≈ 94–95%
+- Test accuracy: ≈ 84–86% (Figure 13)
+- Mild overfitting observed across heterogeneous datasets.
+    """)
+
+    s1, s2, s3 = st.columns([1, 2, 1])
+    with s2:
+        st.image(
+            "assets/images/models/Fixed_size_cnn_curve.png",
+            caption="Training vs testing accuracy for spectrogram CNN model",
+            use_container_width=True
+        )
+
+    st.subheader("Comparison Overview")
+    # Pipe table (Markdown)
+    st.markdown("""
+| Feature type        | Model style | Parameters | Performance | Strengths                                   |
+|---------------------|-------------|------------|-------------|---------------------------------------------|
+| Raw waveform        | 1D CNN      | High       | Low         | No handcrafted feature required             |
+| MFCC                | 1D CNN      | Low        | Moderate    | Efficient, compact representation           |
+| Log-Mel spectrogram | 2D CNN      | Moderate   | High        | Preserves spectral structure; best for CNNs |
+    """)
+
+    t1, t2, t3 = st.columns([1, 2, 1])
+    with t2:
+        st.image(
+            "assets/images/models/feature_comparison_accuracy.png",
+            caption="Accuracy comparison between waveform, MFCC, and spectrogram CNN",
+            use_container_width=True
+        )
 
 # ==================== TAB 2: CNN ====================
 with tab2:
     st.header("Convolutional Neural Network (CNN)")
+    st.subheader("Sliding-Window Spectrogram Approach")
     
     st.write("""
-    Deep learning model using mel-spectrograms as 2D image-like inputs.
+    To enhance temporal feature representation and improve model generalization, the spectrogram-based input was 
+    processed using a sliding-window segmentation technique.
     """)
     
     st.markdown("---")
     
-    # Architecture
-    st.subheader("Model Architecture")
+    # Approach overview
+    st.subheader("Approach")
     
-    st.code("""
-    Input: Mel-Spectrogram (128 × 110 × 1)
-        ↓
-    Conv2D (32 filters, 3×3) + ReLU + BatchNorm
-        ↓
-    MaxPooling (2×2)
-        ↓
-    Conv2D (64 filters, 3×3) + ReLU + BatchNorm
-        ↓
-    MaxPooling (2×2)
-        ↓
-    Conv2D (128 filters, 3×3) + ReLU + BatchNorm
-        ↓
-    MaxPooling (2×2)
-        ↓
-    Flatten
-        ↓
-    Dense (256 units) + ReLU + Dropout(0.5)
-        ↓
-    Dense (128 units) + ReLU + Dropout(0.3)
-        ↓
-    Dense (8 units) + Softmax
-        ↓
-    Output: Emotion Probabilities (8 classes)
-    """, language="text")
-    
-    st.markdown("---")
-    
-    # Training details
-    st.subheader("Training Configuration")
-    
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([3, 2])
     
     with col1:
         st.write("""
-        **Hyperparameters**:
-        - Optimizer: Adam
-        - Learning rate: 0.001
-        - Batch size: 32
-        - Epochs: 50
-        - Loss: Categorical cross-entropy
+        **Sliding-Window Segmentation**:
+        - Window size: 128 × 128 pixels
+        - Overlap: 10% along time axis
+        - Preserves temporal continuity without distortion
+        - Increases effective training samples
+        
+        **Architecture**:
+        - Similar to baseline spectrogram CNN
+        - Three convolutional blocks + max-pooling
+        - Global average pooling → fully connected layers
+        - Softmax output (8 emotions)
+        
+        **Prediction Strategy**:
+        - Individual windows processed separately
+        - Final prediction: majority voting or probability averaging
+        - Ensures robust clip-level classification
         """)
     
     with col2:
-        st.write("""
-        **Regularization**:
-        - Dropout: 0.5, 0.3
-        - Batch normalization
-        - Early stopping (patience=10)
-        - ReduceLROnPlateau
+        st.info("""
+        **Key Benefits**:
+        - Temporal continuity preserved
+        - More training samples
+        - No spectrogram distortion
+        - Robust aggregation strategy
+        
+        **Window Processing**:
+        - Size: 128 × 128
+        - Overlap: 10%
+        - Aggregation: Voting/Averaging
         """)
     
     st.markdown("---")
     
-    # Results
-    st.subheader("Performance Results")
+    # Training Performance
+    st.subheader("Training Performance")
     
-    # IMAGE PLACEHOLDER: CNN training curve
-    st.image("assets/images/models/cnn_training_curve.png",
-            caption="CNN training and validation accuracy/loss curves",
-            use_container_width=True)
+    st.write("""
+    **Accuracy Trends**:
+    - Training accuracy: Increased steadily to **0.72**
+    - Validation accuracy: Plateaued around **~0.60**
+    - Indicates mild overfitting
     
-    col1, col2 = st.columns(2)
+    **Loss Trends**:
+    - Training loss: Decreased consistently
+    - Validation loss: Exhibited fluctuations
+    - Suggests variability in generalization across epochs
+    """)
+    
+    # Figure 15: Training curves (centered, medium size)
+    c1, c2, c3 = st.columns([1, 3, 1])
+    with c2:
+        st.image(
+            "assets/images/models/sliding_window_training_curve.png",
+            caption="Figure 15: Training vs validation accuracy and loss",
+            use_container_width=True
+        )
+    
+    st.markdown("---")
+    
+    # Evaluation Results
+    st.subheader("Evaluation Results")
+    
+    # Performance metrics table
+    st.write("**Classification Report**:")
+    st.markdown("""
+| Emotion    | Precision | Recall | F1-Score |
+|------------|-----------|--------|----------|
+| Neutral    | 0.79      | 0.66   | 0.71     |
+| Calm       | 0.67      | 0.80   | 0.73     |
+| Happy      | 0.56      | 0.48   | 0.52     |
+| Sad        | 0.50      | 0.47   | 0.49     |
+| Angry      | 0.55      | 0.55   | 0.55     |
+| Fearful    | 0.51      | 0.73   | 0.60     |
+| Disgust    | 0.64      | 0.57   | 0.61     |
+| Surprised  | 0.82      | 0.77   | 0.80     |
+| **Overall Accuracy** | | | **0.59** |
+    """)
+    
+    st.markdown("---")
+    
+    # Confusion Matrix
+    st.subheader("Confusion Matrix Analysis")
+    
+    col1, col2 = st.columns([3, 2])
     
     with col1:
-        st.metric("Test Accuracy", "76.4%", "+8.2% vs SVM")
-        st.metric("Validation Accuracy", "77.1%")
-        st.metric("Training Accuracy", "82.3%")
+        # Figure 16: Confusion matrix (use_container_width within column)
+        st.image(
+            "assets/images/models/sliding_window_confusion_matrix.png",
+            caption="Figure 16: Confusion matrix of spectrogram overlap",
+            use_container_width=True
+        )
     
     with col2:
-        st.metric("Precision", "76.2%")
-        st.metric("Recall", "76.4%")
-        st.metric("F1-Score", "76.3%")
-    
-    with st.expander("Confusion Matrix & Analysis"):
         st.write("""
         **Strong Performance**:
-        - Angry: 85% precision
-        - Happy: 82% precision
-        - Sad: 79% precision
+        - Neutral: 0.79 precision
+        - Surprised: 0.82 precision
+        - Calm: 0.80 recall
         
-        **Common Confusions**:
-        - Fear ↔ Neutral (18% confusion)
-        - Happy ↔ Surprise (15% confusion)
-        - Calm ↔ Neutral (22% confusion)
+        **Frequent Misclassifications**:
+        - Happy ↔ Sad ↔ Fearful
+        - Overlapping acoustic features
         
         **Insights**:
-        - CNN captures spatial patterns in spectrograms effectively
-        - Significantly better than traditional ML
-        - Still struggles with low-arousal emotions (calm, neutral)
+        - Fearful & Disgust: High recall, moderate precision
+        - Low-arousal emotions challenging
         """)
+    
+    st.markdown("---")
+    
+    # ROC Curve
+    st.subheader("ROC Curve & AUC Scores")
+    
+    col1, col2 = st.columns([3, 2])
+    
+    with col1:
+        # Figure 17: ROC curve
+        st.image(
+            "assets/images/models/sliding_window_roc_curve.png",
+            caption="Figure 17: ROC curve",
+            use_container_width=True
+        )
+    
+    with col2:
+        st.success("""
+        **High AUC Scores**:
         
-        # IMAGE PLACEHOLDER: CNN confusion matrix
-        st.image("assets/images/models/cnn_confusion_matrix.png",
-                caption="CNN confusion matrix on test set",
-                use_container_width=True)
+        Most classes show strong discriminative capability despite moderate overall accuracy.
+        
+        **Top Performers**:
+        - Surprised
+        - Neutral
+        - Calm
+        
+        **Challenging**:
+        - Happy
+        - Sad
+        - Fearful
+        """)
+    
+    st.markdown("---")
+    
+    # Summary & Future Work
+    st.subheader("Summary & Future Improvements")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.info("""
+        **Key Achievements**:
+        
+        - Temporal feature capture: Sliding-window approach preserved time-dependent patterns
+        
+        - Class separability: Enhanced compared to fixed-size spectrograms
+        
+        - Strong discriminative capability: High AUC scores for most classes
+        
+        - Robust aggregation: Majority voting/averaging for clip-level predictions
+        """)
+    
+    with col2:
+        st.warning("""
+        **Future Improvements**:
+        
+        - Attention mechanisms: Better temporal weighting
+        
+        - Class imbalance: Advanced augmentation or focal loss
+        
+        - Hybrid architectures: CNN–RNN for sequential context modeling
+        
+        - Feature fusion: Combine with prosodic/acoustic features
+        """)
+    
+    st.markdown("---")
+    
+    # Performance summary metrics
+    st.subheader("Performance Summary")
+    
+    metric_col1, metric_col2, metric_col3, metric_col4 = st.columns(4)
+    
+    metric_col1.metric("Overall Accuracy", "59%")
+    metric_col2.metric("Training Accuracy", "72%")
+    metric_col3.metric("Validation Accuracy", "~60%")
+    metric_col4.metric("Best F1-Score", "0.80", "Surprised")
+    
+    st.caption("""
+    **Note**: While overall accuracy (59%) indicates room for improvement, the sliding-window approach 
+    successfully enhanced temporal feature representation and achieved strong AUC scores across most emotion classes.
+    """)
 
 # ==================== TAB 3: LSTM ====================
 with tab3:

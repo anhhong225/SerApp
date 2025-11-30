@@ -54,3 +54,55 @@ html body div.stApp div[data-testid="stAppViewContainer"] > section.main,
 .stApp .stAlert * {
     color: #1a237e !important;
 }
+
+/* Container */
+.main .block-container {
+  max-width: 1200px;
+  padding-top: 1rem;
+}
+
+/* Match Preprocessing tab style: light background, blue selected text, red underline */
+.stTabs [role="tablist"] {
+  gap: 8px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+}
+.stTabs [role="tab"] {
+  padding: 10px 14px;
+  border-radius: 10px 10px 0 0;
+  background: #fafafa;
+  color: #333;
+  font-weight: 500;
+}
+.stTabs [role="tab"][aria-selected="true"] {
+  background: #f5f9ff;
+  color: #0b70d6;
+  position: relative;
+}
+.stTabs [role="tab"][aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -7px;
+  height: 3px;
+  background: #e23b3b;
+  border-radius: 2px;
+}
+
+/* Minor typography and metrics */
+h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.1rem; }
+
+[data-testid="stMetric"] {
+  background: #f9fafb;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* Code blocks */
+pre, code {
+  font-size: 0.9rem !important;
+  line-height: 1.4;
+}
