@@ -2,13 +2,16 @@ import streamlit as st
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent))
+BASE_DIR = Path(__file__).parent.parent  # points to app/
+IMG_DIR = BASE_DIR / "assets" / "images" / "models"
+
+sys.path.append(str(BASE_DIR))
 from utils.chatbot_ui import load_css
 
 st.set_page_config(page_title="Models", page_icon="🤖", layout="wide")
 load_css("global.css", "models.css")
 
-st.title("🤖 Machine Learning and Deep Learning Implementation")
+st.title("Machine Learning and Deep Learning Implementation")
 st.markdown("---")
 
 st.info("""
@@ -48,8 +51,8 @@ with tab1:
     c1, c2, c3 = st.columns([1, 2, 1])
     with c2:
         st.image(
-            "assets/images/models/raw_waveform_accuracy.png",
-            caption="Figure 11: Validation accuracy of the raw waveform model",
+            str(IMG_DIR / "raw_waveform_accuracy.png"),
+            caption="Validation accuracy of the raw waveform model",
             use_container_width=True
         )
 
