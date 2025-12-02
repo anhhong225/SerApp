@@ -44,7 +44,7 @@ with tab1:
     shallow 1D CNN was applied to capture local temporal variations without frequency transformation.
     """)
     st.write("""
-    The model achieved low accuracy and highly unstable validation performance (Figure 11). Large input dimensionality
+    The model achieved low accuracy and highly unstable validation performance (Figure 1). Large input dimensionality
     led to rapid overfitting; amplitude-only signals lack explicit pitch/timbral information.
     """)
 
@@ -52,7 +52,7 @@ with tab1:
     with c2:
         st.image(
             str(IMG_DIR / "raw_waveform_accuracy.png"),
-            caption="Validation accuracy of the raw waveform model",
+            caption="Figure 1: Validation accuracy of the raw waveform model",
             use_container_width=True
         )
 
@@ -80,8 +80,8 @@ with tab1:
     m1, m2, m3 = st.columns([1, 2, 1])
     with m2:
         st.image(
-            "assets/images/models/mfcc_1dcnn_accuracy.png",
-            caption="Accuracy of MFCC 1D CNN model",
+            str(IMG_DIR / "mfcc_1dcnn_accuracy.png"),
+            caption="Figure 2: Accuracy of MFCC 1D CNN model",
             use_container_width=True
         )
 
@@ -111,8 +111,8 @@ Performance overview:
     s1, s2, s3 = st.columns([1, 2, 1])
     with s2:
         st.image(
-            "assets/images/models/Fixed_size_cnn_curve.png",
-            caption="Training vs testing accuracy for spectrogram CNN model",
+            str(IMG_DIR / "assets/images/models/Fixed_size_cnn_curve.png"),
+            caption="Figure 3: Training vs testing accuracy for spectrogram CNN model",
             use_container_width=True
         )
 
@@ -129,8 +129,8 @@ Performance overview:
     t1, t2, t3 = st.columns([1, 2, 1])
     with t2:
         st.image(
-            "assets/images/models/feature_comparison_accuracy.png",
-            caption="Accuracy comparison between waveform, MFCC, and spectrogram CNN",
+            str(IMG_DIR / "assets/images/models/feature_comparison_accuracy.png"),
+            caption="Figure 4: Accuracy comparison between waveform, MFCC, and spectrogram CNN",
             use_container_width=True
         )
 
@@ -206,8 +206,8 @@ with tab2:
     c1, c2, c3 = st.columns([1, 3, 1])
     with c2:
         st.image(
-            "assets/images/models/sliding_window_training_curve.png",
-            caption="Figure 15: Training vs validation accuracy and loss",
+            str(IMG_DIR / "assets/images/models/sliding_window_training_curve.png"),
+            caption="Figure 5: Training vs validation accuracy and loss",
             use_container_width=True
         )
     
@@ -242,8 +242,8 @@ with tab2:
     with col1:
         # Figure 16: Confusion matrix (use_container_width within column)
         st.image(
-            "assets/images/models/sliding_window_confusion_matrix.png",
-            caption="Figure 16: Confusion matrix of spectrogram overlap",
+            str(IMG_DIR / "assets/images/models/sliding_window_confusion_matrix.png"),
+            caption="Figure 6: Confusion matrix of spectrogram overlap",
             use_container_width=True
         )
     
@@ -273,8 +273,8 @@ with tab2:
     with col1:
         # Figure 17: ROC curve
         st.image(
-            "assets/images/models/sliding_window_roc_curve.png",
-            caption="Figure 17: ROC curve",
+            str(IMG_DIR / "assets/images/models/sliding_window_roc_curve.png"),
+            caption="Figure 7: ROC curve",
             use_container_width=True
         )
     
@@ -410,7 +410,7 @@ with tab3:
     st.subheader("Performance Results")
     
     # IMAGE PLACEHOLDER: LSTM training curve
-    st.image("assets/images/models/lstm_training_curve.png",
+    st.image(str(IMG_DIR / "assets/images/models/lstm_training_curve.png"),
             caption="LSTM training and validation accuracy/loss curves",
             use_container_width=True)
     
@@ -535,7 +535,8 @@ with tab4:
     st.subheader("Performance Results")
     
     # IMAGE PLACEHOLDER: Wav2Vec2 training curve
-    st.image("assets/images/models/wav2vec2_training_curve.png",
+    st.image(
+        str(IMG_DIR / "assets/images/models/wav2vec2_training_curve.png"),
             caption="Wav2Vec2 training and validation accuracy/loss curves",
             use_container_width=True)
     
@@ -551,7 +552,8 @@ with tab4:
     st.subheader("Per-Emotion Performance")
     
     # IMAGE PLACEHOLDER: Wav2Vec2 per-emotion F1 scores
-    st.image("assets/images/models/wav2vec2_per_emotion.png",
+    st.image(
+        str(IMG_DIR / "assets/images/models/wav2vec2_per_emotion.png"),
             caption="Wav2Vec2 F1-score per emotion class",
             use_container_width=True)
     
@@ -581,7 +583,8 @@ with tab4:
         """)
     
     # IMAGE PLACEHOLDER: Wav2Vec2 confusion matrix
-    st.image("assets/images/models/wav2vec2_confusion_matrix.png",
+    st.image(
+        str(IMG_DIR / "assets/images/models/wav2vec2_confusion_matrix.png"),
             caption="Wav2Vec2 confusion matrix on test set",
             use_container_width=True)
     
@@ -616,7 +619,8 @@ with tab5:
     st.subheader("Overall Performance Comparison")
     
     # IMAGE PLACEHOLDER: All models comparison
-    st.image("assets/images/models/all_models_comparison.png",
+    st.image(
+        str(IMG_DIR / "assets/images/models/all_models_comparison.png"),
             caption="Test accuracy comparison across all models",
             use_container_width=True)
     
