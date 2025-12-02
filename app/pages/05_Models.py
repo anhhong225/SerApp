@@ -111,7 +111,7 @@ Performance overview:
     s1, s2, s3 = st.columns([1, 2, 1])
     with s2:
         st.image(
-            str(IMG_DIR / "assets/images/models/Fixed_size_cnn_curve.png"),
+            str(IMG_DIR / "assets/images/models/fixed_size_cnn_curve.png"),
             caption="Figure 3: Training vs testing accuracy for spectrogram CNN model",
             use_container_width=True
         )
