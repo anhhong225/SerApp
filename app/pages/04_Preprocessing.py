@@ -30,7 +30,7 @@ with tab1:
       → Resample (16 kHz)
       → Mono conversion
       → Silence trimming (top_db=40)
-      → Duration normalization (target ~3.5s)
+      → Duration normalization (target ~4s)
       → Amplitude normalization (RMS)
       → Save preprocessed waveform
     """, language="text")
