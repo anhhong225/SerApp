@@ -9,7 +9,7 @@ st.set_page_config(page_title="Data Collection", page_icon="📊", layout="wide"
 
 load_css("global.css", "data_collection.css")
 
-st.title("📊 Data Collection")
+st.title("Data Collection")
 
 # Quick summary banner
 st.info("""
@@ -83,9 +83,6 @@ It features professional actors delivering scripted emotional speech with high p
 - Widely cited in academic research for benchmarking
 
 **Download**: [RAVDESS on Kaggle](https://www.kaggle.com/datasets/uwrfkaggler/ravdess-emotional-speech-audio)
-
-**Citation**: Livingstone SR, Russo FA (2018) *The Ryerson Audio-Visual Database of Emotional Speech and Song (RAVDESS)*
-
 ---
 """)
 
@@ -127,8 +124,6 @@ offering high-quality data for gender-specific emotion analysis.
 - Clear emotional contrasts make it ideal for model training
 
 **Download**: [TESS on University of Toronto](https://tspace.library.utoronto.ca/handle/1807/24487)
-
-**Citation**: Pichora-Fuller MK, Dupuis K (2020) *Toronto emotional speech set (TESS)*
 
 ---
 """)
@@ -182,8 +177,6 @@ ages, ethnicities, and emotional expression styles.
 
 **Download**: [CREMA-D on GitHub](https://github.com/CheyneyComputerScience/CREMA-D)
 
-**Citation**: Cao H, Cooper DG, Keutmann MK, et al. (2014) *CREMA-D: Crowd-sourced Emotional Multimodal Actors Dataset*
-
 ---
 """)
 
@@ -232,8 +225,6 @@ recorded in a controlled laboratory environment.
 
 **Download**: [SAVEE on Kaggle](https://www.kaggle.com/datasets/barelydedicated/savee-database)
 
-**Citation**: Haq S, Jackson PJB (2011) *Surrey Audio-Visual Expressed Emotion (SAVEE) Database*
-
 ---
 """)
 
@@ -245,7 +236,7 @@ By merging these four datasets, we create a comprehensive training corpus that b
 
 | **Characteristic** | **Combined Dataset** |
 |--------------------|---------------------|
-| **Total Samples** | **12,162 audio files** |
+| **Total Samples** | **13,174 audio files** |
 | **Unique Speakers** | **121 actors** (65 male, 56 female) |
 | **Emotion Classes** | **8 emotions** (merged taxonomy) |
 | **Age Diversity** | 20-74 years (young adults to seniors) |
@@ -253,7 +244,6 @@ By merging these four datasets, we create a comprehensive training corpus that b
 | **Accent Variation** | North American (RAVDESS, TESS, CREMA-D) + British (SAVEE) |
 | **Sample Rates** | 16 kHz to 48 kHz (resampled to 16 kHz for consistency) |
 | **Channels** | Mixed (converted to Mono for uniformity) |
-| **Total Duration** | ~10 hours of emotional speech |
 
 ### Emotion Taxonomy Harmonization
 
