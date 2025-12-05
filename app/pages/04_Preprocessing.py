@@ -8,6 +8,9 @@ from utils.chatbot_ui import load_css
 st.set_page_config(page_title="Preprocessing & Features", page_icon="⚙️", layout="wide")
 load_css("global.css", "preprocessing.css")
 
+BASE_DIR = Path(__file__).parent.parent  # points to app/
+IMG_DIR = BASE_DIR / "assets" / "images" / "preprocess"
+
 st.title("Preprocessing, Batch Processing, and Feature Extraction")
 st.markdown("---")
 
@@ -42,7 +45,7 @@ with tab1:
     col3.metric("Target Duration", "≈3.5 s")
     col4.metric("Trim Threshold", "-40 dB")
 
-    st.image("assets/images/preprocess/silence_trimming.png",
+    st.image(IMG_DIR / "silence_trimming.png",
              caption="Example: Waveform before and after silence trimming",
              use_container_width=True)
 
@@ -130,7 +133,7 @@ with tab3:
         - Emphasis: 200–3700 Hz region
         """)
 
-    st.image("assets/images/preprocess/melspectrogram_examples.png",
+    st.image(IMG_DIR / "melspectrogram_examples.png",
              caption="Log-mel spectrogram examples across emotions",
              use_container_width=True)
 

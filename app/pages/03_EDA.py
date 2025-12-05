@@ -8,8 +8,10 @@ from utils.chatbot_ui import load_css
 st.set_page_config(page_title="EDA", page_icon="📈", layout="wide")
 load_css("global.css", "eda.css")
 
+BASE_DIR = Path(__file__).parent.parent  # points to app/
+IMG_DIR = BASE_DIR / "assets" / "images" / "eda"
 # ==================== HEADER ====================
-st.title("📈 Exploratory Data Analysis")
+st.title("Exploratory Data Analysis")
 st.markdown("---")
 
 st.info("""
@@ -53,7 +55,7 @@ with tab1:
     st.markdown("---")
     
     # Emotion contribution image
-    st.image("assets/images/eda/emotion_contribution_by_dataset.png", 
+    st.image(IMG_DIR / "emotion_contribution_by_dataset.png", 
             caption="Figure 1: The emotion contribution of each dataset",
             use_container_width=True)
 
@@ -95,7 +97,7 @@ with tab2:
     """)
     
     # IMAGE PLACEHOLDER 2: Figure 3 - Duration distribution before trimming
-    st.image("assets/images/eda/duration_distribution_before_trim.png", 
+    st.image(IMG_DIR / "duration_distribution_before_trim.png", 
             caption="Figure 3: Distribution of audio duration (before trimming silence)",
             use_container_width=True)
     
@@ -124,7 +126,7 @@ with tab2:
     """)
     
     # IMAGE PLACEHOLDER 3: Figure 6 - Duration distribution after trimming
-    st.image("assets/images/eda/duration_distribution_after_trim.png", 
+    st.image(IMG_DIR / "duration_distribution_after_trim.png", 
             caption="Figure 6: Distribution of audio duration after trimming silence",
             use_container_width=True)
     
@@ -172,7 +174,7 @@ with tab3:
     # Waveform and spectrogram
     st.subheader("Waveform and Spectrogram Examples")
     
-    st.image("assets/images/eda/waveform_spectrogram_emotions.png", 
+    st.image(IMG_DIR / "waveform_spectrogram_emotions.png", 
             caption="Figure 4: Waveform and spectrogram of emotions",
             use_container_width=True)
     
@@ -228,7 +230,7 @@ with tab3:
     """)
     
     # IMAGE PLACEHOLDER 5: Figure 5 - Before/after trimming waveform
-    st.image("assets/images/eda/waveform_trim_comparison.png", 
+    st.image(IMG_DIR / "waveform_trim_comparison.png", 
             caption="Figure 5: Waveform of before and after trimming",
             use_container_width=True)
     
@@ -312,7 +314,7 @@ with tab4:
     # Variance analysis
     st.subheader("Variance of Average Power")
     
-    st.image("assets/images/eda/variance_avg_power.png", 
+    st.image(IMG_DIR / "variance_avg_power.png", 
             caption="Figure 8: Variance of average power across emotions",
             use_container_width=True)
     
@@ -354,7 +356,7 @@ with tab4:
     # ANOVA results
     st.subheader("ANOVA Significance Testing")
     
-    st.image("assets/images/eda/anova_significance.png", 
+    st.image(IMG_DIR / "anova_significance.png", 
             caption="Figure 9: ANOVA significance across frequencies",
             use_container_width=True)
     
@@ -405,7 +407,7 @@ with tab4:
     below key cutoff frequencies (e.g., 2 kHz, 3.7 kHz, 8 kHz).
     """)
     
-    st.image("assets/images/eda/cumulative_discriminative_power.png", 
+    st.image(IMG_DIR / "cumulative_discriminative_power.png", 
             caption="Figure 10: Cumulative discriminative power vs frequency",
             use_container_width=True)
     

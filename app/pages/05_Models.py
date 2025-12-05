@@ -2064,459 +2064,421 @@ Raw Waveform (16 kHz)
 
         st.markdown("---")
 
-    # CNN Baseline for Negative Emotions
-    with st.expander("CNN Baseline Model"):
-        st.write("""
-        A lightweight CNN baseline was developed 
-        to establish initial performance benchmarks for negative emotion classification.
-        """)
-
-        st.subheader("Architecture")
-
-        cnn_arch_col1, cnn_arch_col2 = st.columns([2, 1])
-
-        with cnn_arch_col1:
-            st.code("""
-2-Channel Mel-Spectrogram (Low + High Pass)
-    ↓
-Conv Block 1 (32 filters, 3×3)
-    ├─ BatchNorm + ReLU
-    └─ MaxPool (2×2)
-    ↓
-Conv Block 2 (64 filters, 3×3)
-    ├─ BatchNorm + ReLU
-    └─ MaxPool (2×2)
-    ↓
-Conv Block 3 (128 filters, 3×3)
-    ├─ BatchNorm + ReLU
-    └─ AdaptiveAvgPool (8×T)
-    ↓
-Frequency Averaging → [B, 128, T']
-    ↓
-Multi-Head Attention (4 heads)
-    ├─ Self-attention over time
-    └─ Global temporal pooling
-    ↓
-Fully Connected Layers
-    ├─ FC1 (128 → 256) + ReLU
-    ├─ Dropout (0.4)
-    └─ FC2 (256 → 4) + Softmax
-    ↓
-Output: Negative Emotion Probabilities
-        """, language="text")
-
-        with cnn_arch_col2:
-            st.info("""
-            **Model Specs**:
-            
-            **Parameters**: ~250K
-            **Classes**: 4 (angry, sad, fearful, disgust)
-            **Input**: 2-channel spectrograms
-            **Optimizer**: Adam (lr=1e-4)
-            **Epochs**: 100 (early stopping)
-            
-            **Key Features**:
-            - Lightweight architecture
-            - Multi-head attention
-            - Dual-band input
-            """)
-
-        st.markdown("---")
-
-        st.subheader("Training Configuration")
-
-        config_col1, config_col2 = st.columns(2)
-
-        with config_col1:
-            st.markdown("""
-            **Data**:
-            - Training samples: 1,643 negative emotions
-            - Input: Dual-band spectrograms (low-pass + high-pass)
-            - Batch size: 32
-            - Loss: Cross-Entropy
-
-            **Architecture Highlights**:
-            - 3 convolutional blocks (32 → 64 → 128 filters)
-            - AdaptiveAvgPool preserves temporal resolution
-            - Multi-head attention (4 heads) over time dimension
-            """)
-
-        with config_col2:
-            st.markdown("""
-            **Training**:
-            - Optimizer: Adam (lr = 1e-4)
-            - Epochs: 100 with early stopping
-            - Regularization: Dropout (0.4), BatchNorm
-            - Best model saved based on validation accuracy
-
-            **Output**:
-            - Labels: angry, sad, fearful, disgust
-            """)
-
-        st.markdown("---")
-
-        # ========== PERFORMANCE RESULTS ==========
-        st.subheader("Performance Results")
-
-        # Metrics Summary
-        perf_col1, perf_col2, perf_col3 = st.columns(3)
-
-        with perf_col1:
-            st.metric("Test Accuracy", "60%")
-            st.caption("4-class negative emotions")
-
-        with perf_col2:
-            st.metric("Parameters", "~250K")
-            st.caption("Lightweight model")
-
-        with perf_col3:
-            st.metric("Training Time", "~15 min")
-            st.caption("100 epochs")
-
-        st.markdown("---")
-
-        # Classification Report & Confusion Matrix
-        st.subheader("Detailed Performance Analysis")
-
-        result_col1, result_col2 = st.columns([1, 1])
-
-        with result_col1:
-            st.write("**Classification Report**:")
-            st.image(
-                str(IMG_DIR / "cnn_baseline_classification_report.png"),
-                caption="Classification metrics for CNN Baseline (4 negative emotions)",
-                use_container_width=True
-            )
-            
+        # CNN Baseline for Negative Emotions
+        with st.expander("CNN Baseline Model"):
             st.write("""
-            **Performance Breakdown**:
-            - **Angry**: 0.56 precision, 0.90 recall (best recall)
-            - **Sad**: 0.67 precision, 0.46 recall (moderate)
-            - **Fearful**: 0.61 precision, 0.73 recall (good)
-            - **Disgust**: 0.62 precision, 0.23 recall (challenging)
-            
-            **Overall Accuracy**: 0.60 (60%)
+            A lightweight CNN baseline was developed 
+            to establish initial performance benchmarks for negative emotion classification.
             """)
-
-        with result_col2:
-            st.write("**Confusion Matrix**:")
-            st.image(
-                str(IMG_DIR / "cnn_baseline_confusion_matrix.png"),
-                caption="Confusion patterns for CNN Baseline",
-                use_container_width=True
-            )
-            
-            st.write("""
-            **Key Observations**:
-            - **Angry**: 84/93 correct (strong diagonal)
-            - **Sad**: Confused with fearful (18/80)
-            - **Fearful**: Good separation (57/78)
-            - **Disgust**: High confusion → angry (42/78)
-            
-            **Common Errors**: Disgust → Angry (54%)
-            """)
-
-        st.markdown("---")
-
-        # Performance Analysis
-        st.subheader("Analysis")
-
-        analysis_col1, analysis_col2 = st.columns(2)
-
-        with analysis_col1:
-            st.success("""
-            **Strengths**:
-            
-            **Angry Detection** (0.90 recall):
-            - Best performing class
-            - Clear high-energy acoustic features
-            - Strong temporal patterns captured by attention
-            
-            **Fearful Recognition** (0.73 recall):
-            - Good separation from other emotions
-            - Attention module helps with breathy patterns
-            
-            **Lightweight & Fast**:
-            - Only 250K parameters
-            - ~15 min training time
-            - Efficient inference (~20ms per sample)
-            """)
-
-        with analysis_col2:
-            st.warning("""
-            **Weaknesses**:
-            
-            **Disgust Classification** (0.23 recall):
-            - Worst performing class
-            - 54% confused with angry
-            - Harsh voice quality overlap
-            
-            **Sad-Fearful Confusion**:
-            - Both low-energy emotions
-            - Similar spectral patterns
-            - 22.5% misclassification rate
-            
-            **Limited Depth**:
-            - Only 3 conv blocks
-            - Shallow feature hierarchy
-            - Misses complex patterns
-            """)
-
-        st.markdown("---")
-
-        st.subheader("Why We Moved to ResNet-18")
-
-        reason_col1, reason_col2 = st.columns(2)
-
-        with reason_col1:
-            st.error("""
-            **CNN Baseline Limitations**:
-
-            **Limited Depth**: Only 3 conv blocks
-            - Insufficient hierarchical feature learning
-            - Shallow receptive field
-            - Can't capture multi-scale patterns
-
-            **Vanishing Gradients**: No skip connections
-            - Harder to train deeper networks
-            - Gradient flow issues beyond 3-4 layers
-            - Limits capacity growth
-
-            **Feature Extraction**: Basic conv layers
-            - Less expressive than residual blocks
-            - Single-scale feature extraction
-            - Misses fine-grained distinctions
-            
-            **Disgust Classification**:
-            - Only 23% recall
-            - Too much confusion with angry
-            - Needs better feature discrimination
-            """)
-
-        with reason_col2:
-            st.success("""
-            **ResNet-18 Improvements**:
-
-            **Residual Connections**: Skip connections
-            - Better gradient flow
-            - Enables deeper networks (18+ layers)
-            - Prevents degradation problem
-
-            **Deeper Architecture**: 4 residual blocks
-            - More hierarchical features
-            - Better spectral-temporal modeling
-            - Multi-scale pattern learning
-
-            **Pre-trained Weights**: ImageNet initialization
-            - Transfer learning benefit
-            - Faster convergence
-            - Better feature representations
-            
-            **Improved Accuracy**:
-            - 60% → 74.16% (+14.16%)
-            - Better disgust discrimination
-            - Reduced confusion patterns
-            """)
-
-        st.markdown("---")
-
-    # ========== RESNET-18 ARCHITECTURE ==========
-    with st.expander("ResNet Architecture & Training Details"):
-        st.header("ResNet-18 Architecture & Results")
-        st.write("""
-        These paired dual-band spectrograms are then used to train a dedicated negative-emotion classifier, 
-        implemented using a **ResNet-18 backbone adapted for two-channel audio features**. The convolutional 
-        layers extract localized spectral patterns from both bands, while a multi-head attention module 
-        aggregates temporal dependencies across the full utterance.
-        """)
-        st.markdown("---")
-        # ResNet-18 Architecture Details
-        st.subheader("ResNet-18 Model Architecture")
-        st.write("**ResNet-18 Backbone with Multi-Head Attention**:")
-        arch2_col1, arch2_col2 = st.columns([3, 2])
-        with arch2_col1:
-            st.code("""
+    
+            st.subheader("Architecture")
+    
+            cnn_arch_col1, cnn_arch_col2 = st.columns([2, 1])
+    
+            with cnn_arch_col1:
+                st.code("""
     2-Channel Mel-Spectrogram (Low + High Pass)
         ↓
-    Initial Conv2D (64 filters, 7×7, stride 2)
+    Conv Block 1 (32 filters, 3×3)
+        ├─ BatchNorm + ReLU
+        └─ MaxPool (2×2)
         ↓
-    Max Pooling (3×3, stride 2)
+    Conv Block 2 (64 filters, 3×3)
+        ├─ BatchNorm + ReLU
+        └─ MaxPool (2×2)
         ↓
-    ResNet-18 Backbone:
-      ├─ Residual Block 1 (64 filters × 2)
-      ├─ Residual Block 2 (128 filters × 2, stride 2)
-      ├─ Residual Block 3 (256 filters × 2, stride 2)
-      └─ Residual Block 4 (512 filters × 2, stride 2)
+    Conv Block 3 (128 filters, 3×3)
+        ├─ BatchNorm + ReLU
+        └─ AdaptiveAvgPool (8×T)
         ↓
-    Multi-Head Attention Module
-      ├─ Query projection (512 → 512)
-      ├─ Key projection (512 → 512)
-      ├─ Value projection (512 → 512)
-      └─ Weighted aggregation across time
+    Frequency Averaging → [B, 128, T']
         ↓
-    Global Average Pooling (spatial)
+    Multi-Head Attention (4 heads)
+        ├─ Self-attention over time
+        └─ Global temporal pooling
         ↓
-    Feed-Forward Classifier:
-      ├─ Dense(512 → 256) + ReLU + Dropout(0.4)
-      ├─ Dense(256 → 128) + ReLU + Dropout(0.3)
-      └─ Dense(128 → 4) + Softmax
+    Fully Connected Layers
+        ├─ FC1 (128 → 256) + ReLU
+        ├─ Dropout (0.4)
+        └─ FC2 (256 → 4) + Softmax
         ↓
     Output: Negative Emotion Probabilities
-        (Angry / Sad / Fearful / Disgust)
-                """, language="text")
+            """, language="text")       
+            with cnn_arch_col2:
+                st.info("""
+                **Model Specs**:
 
-        with arch2_col2:
-            st.info("""
-            **Architecture Highlights**:
-            **ResNet-18 Backbone**:
-            - Residual connections
-            - Skip connections prevent vanishing gradients
-            - Deep feature extraction (4 blocks)
-            **Multi-Head Attention**:
-            - Captures temporal dependencies
-            - Weights important time segments
-            - Aggregates utterance-level features
-            **Classifier**:
-            - 2-layer feed-forward
-            - Dropout regularization (0.4, 0.3)
-            - 4-class softmax output
-            **Total Parameters**: ~11M
-            **Input Shape**: (128, Time, 2)
-            """)
-        st.markdown("---")
-        # Training Configuration
-        st.subheader("Training Configuration")
-        train_config_col1, train_config_col2 = st.columns(2)
-        with train_config_col1:
-            st.markdown("""
-            **Model Setup**:
-            - Backbone: ResNet-18 (adapted for 2-channel audio)
-            - Input: 2-channel Mel-spectrograms
-            - Output: 4 negative emotions
-            - Loss: Categorical Cross-Entropy
-            **Data**:
-            - Training samples: 1,643 (negative only)
-            - Split: 80% train, 10% val, 10% test
-            - Augmentation: SpecAugment, time/freq masking
-            """)
-        with train_config_col2:
-            st.markdown("""
-            **Optimization**:
-            - Optimizer: Adam (lr = 1e-4)
-            - Batch size: 32
-            - Epochs: 100 (early stopping)
-            - Scheduler: ReduceLROnPlateau
-            **Regularization**:
-            - Dropout: 0.4 (layer 1), 0.3 (layer 2)
-            - L2 weight decay: 1e-5
-            - Early stopping patience: 10
-            """)
-        st.markdown("---")
-        # ========== RESNET RESULTS ==========
-        st.header("ResNet-18 Performance Results")
-        st.write("""
-        The ResNetAudio model achieved **74.16% accuracy** for fine-grained negative-emotion classification, 
-        which is competitive for CNN-based architectures though lower than transformer-based approaches. 
-        The model demonstrates robust feature extraction for high-energy emotions like angry, while lower 
-        recall for disgust and fear suggests challenges in distinguishing subtle emotional cues.
-        """)
-        # Classification Report
-        result_col1, result_col2 = st.columns([2, 1])
-        with result_col1:
-            st.image(
-                str(IMG_DIR / "resnet_audio_classification_report.png"),
-                caption="Classification Report for ResNetAudio Model",
-                use_container_width=True
-            )
+                **Parameters**: ~250K
+                **Classes**: 4 (angry, sad, fearful, disgust)
+                **Input**: 2-channel spectrograms
+                **Optimizer**: Adam (lr=1e-4)
+                **Epochs**: 100 (early stopping)
+
+                **Key Features**:
+                - Lightweight architecture
+                - Multi-head attention
+                - Dual-band input
+                """)        
+            st.markdown("---")      
+            st.subheader("Training Configuration")      
+            config_col1, config_col2 = st.columns(2)        
+            with config_col1:
+                st.markdown("""
+                **Data**:
+                - Training samples: 1,643 negative emotions
+                - Input: Dual-band spectrograms (low-pass + high-pass)
+                - Batch size: 32
+                - Loss: Cross-Entropy       
+                **Architecture Highlights**:
+                - 3 convolutional blocks (32 → 64 → 128 filters)
+                - AdaptiveAvgPool preserves temporal resolution
+                - Multi-head attention (4 heads) over time dimension
+                """)        
+            with config_col2:
+                st.markdown("""
+                **Training**:
+                - Optimizer: Adam (lr = 1e-4)
+                - Epochs: 100 with early stopping
+                - Regularization: Dropout (0.4), BatchNorm
+                - Best model saved based on validation accuracy     
+                **Output**:
+                - Labels: angry, sad, fearful, disgust
+                """)        
+            st.markdown("---")      
+            # ========== PERFORMANCE RESULTS ==========
+            st.subheader("Performance Results")     
+            # Metrics Summary
+            perf_col1, perf_col2, perf_col3 = st.columns(3)     
+            with perf_col1:
+                st.metric("Test Accuracy", "60%")
+                st.caption("4-class negative emotions")     
+            with perf_col2:
+                st.metric("Parameters", "~250K")
+                st.caption("Lightweight model")     
+            with perf_col3:
+                st.metric("Training Time", "~15 min")
+                st.caption("100 epochs")        
+            st.markdown("---")      
+            # Classification Report & Confusion Matrix
+            st.subheader("Detailed Performance Analysis")       
+            result_col1, result_col2 = st.columns([1, 1])       
+            with result_col1:
+                st.write("**Classification Report**:")
+                st.image(
+                    str(IMG_DIR / "cnn_baseline_classification_report.png"),
+                    caption="Classification metrics for CNN Baseline (4 negative emotions)",
+                    use_container_width=True
+                )
+
+                st.write("""
+                **Performance Breakdown**:
+                - **Angry**: 0.56 precision, 0.90 recall (best recall)
+                - **Sad**: 0.67 precision, 0.46 recall (moderate)
+                - **Fearful**: 0.61 precision, 0.73 recall (good)
+                - **Disgust**: 0.62 precision, 0.23 recall (challenging)
+
+                **Overall Accuracy**: 0.60 (60%)
+                """)        
+            with result_col2:
+                st.write("**Confusion Matrix**:")
+                st.image(
+                    str(IMG_DIR / "cnn_baseline_confusion_matrix.png"),
+                    caption="Confusion patterns for CNN Baseline",
+                    use_container_width=True
+                )
+
+                st.write("""
+                **Key Observations**:
+                - **Angry**: 84/93 correct (strong diagonal)
+                - **Sad**: Confused with fearful (18/80)
+                - **Fearful**: Good separation (57/78)
+                - **Disgust**: High confusion → angry (42/78)
+
+                **Common Errors**: Disgust → Angry (54%)
+                """)        
+            st.markdown("---")      
+            # Performance Analysis
+            st.subheader("Analysis")        
+            analysis_col1, analysis_col2 = st.columns(2)        
+            with analysis_col1:
+                st.success("""
+                **Strengths**:
+
+                **Angry Detection** (0.90 recall):
+                - Best performing class
+                - Clear high-energy acoustic features
+                - Strong temporal patterns captured by attention
+
+                **Fearful Recognition** (0.73 recall):
+                - Good separation from other emotions
+                - Attention module helps with breathy patterns
+
+                **Lightweight & Fast**:
+                - Only 250K parameters
+                - ~15 min training time
+                - Efficient inference (~20ms per sample)
+                """)        
+            with analysis_col2:
+                st.warning("""
+                **Weaknesses**:
+
+                **Disgust Classification** (0.23 recall):
+                - Worst performing class
+                - 54% confused with angry
+                - Harsh voice quality overlap
+
+                **Sad-Fearful Confusion**:
+                - Both low-energy emotions
+                - Similar spectral patterns
+                - 22.5% misclassification rate
+
+                **Limited Depth**:
+                - Only 3 conv blocks
+                - Shallow feature hierarchy
+                - Misses complex patterns
+                """)        
+            st.markdown("---")      
+            st.subheader("Why We Moved to ResNet-18")       
+            reason_col1, reason_col2 = st.columns(2)        
+            with reason_col1:
+                st.error("""
+                **CNN Baseline Limitations**:       
+                **Limited Depth**: Only 3 conv blocks
+                - Insufficient hierarchical feature learning
+                - Shallow receptive field
+                - Can't capture multi-scale patterns        
+                **Vanishing Gradients**: No skip connections
+                - Harder to train deeper networks
+                - Gradient flow issues beyond 3-4 layers
+                - Limits capacity growth        
+                **Feature Extraction**: Basic conv layers
+                - Less expressive than residual blocks
+                - Single-scale feature extraction
+                - Misses fine-grained distinctions
+
+                **Disgust Classification**:
+                - Only 23% recall
+                - Too much confusion with angry
+                - Needs better feature discrimination
+                """)        
+            with reason_col2:
+                st.success("""
+                **ResNet-18 Improvements**:     
+                **Residual Connections**: Skip connections
+                - Better gradient flow
+                - Enables deeper networks (18+ layers)
+                - Prevents degradation problem      
+                **Deeper Architecture**: 4 residual blocks
+                - More hierarchical features
+                - Better spectral-temporal modeling
+                - Multi-scale pattern learning      
+                **Pre-trained Weights**: ImageNet initialization
+                - Transfer learning benefit
+                - Faster convergence
+                - Better feature representations
+
+                **Improved Accuracy**:
+                - 60% → 74.16% (+14.16%)
+                - Better disgust discrimination
+                - Reduced confusion patterns
+                """)        
+            st.markdown("---")      
+        # ========== RESNET-18 ARCHITECTURE ==========
+        with st.expander("ResNet Architecture & Training Details"):
+            st.header("ResNet-18 Architecture & Results")
             st.write("""
-            **Performance Breakdown**:
-            **Strong Emotions**:
-            - **Angry**: Best performance
-            - High-energy, clear features
-            - Robust feature extraction
-            **Moderate**:
-            - **Sad**: Moderate recall
-            - Low arousal, subtle cues
-            **Challenging**:
-            - **Fearful**: Lower recall
-            - **Disgust**: Underrepresented
-            - Subtle emotional distinctions
+            These paired dual-band spectrograms are then used to train a dedicated negative-emotion classifier, 
+            implemented using a **ResNet-18 backbone adapted for two-channel audio features**. The convolutional 
+            layers extract localized spectral patterns from both bands, while a multi-head attention module 
+            aggregates temporal dependencies across the full utterance.
             """)
-        with result_col2:
-            st.success("""
-            **Performance Summary**:
-            **Overall Accuracy**: 74.16%
-            **Best Performer**: Angry
-            - Clear high-energy acoustic features
-            - Strong spectral patterns
-            **Challenging Classes**: 
-            - Disgust: Subtle cues
-            - Fear: Subdued expression
-            **vs CNN Baseline**:
-            - +14.16% improvement (60% → 74.16%)
-            - Better feature extraction
-            - Residual learning benefit
-            """)
-        st.markdown("---")
-        # Confusion Matrix
-        st.subheader("Confusion Matrix Analysis")
-        conf_col1, conf_col2 = st.columns([2, 1])
-        with conf_col1:
-            st.image(
-                str(IMG_DIR / "resnet_audio_confusion_matrix.png"),
-                caption="Confusion Matrix for ResNetAudio Model",
-                use_container_width=True
-            )
-        with conf_col2:
+            st.markdown("---")
+            # ResNet-18 Architecture Details
+            st.subheader("ResNet-18 Model Architecture")
+            st.write("**ResNet-18 Backbone with Multi-Head Attention**:")
+            arch2_col1, arch2_col2 = st.columns([3, 2])
+            with arch2_col1:
+                st.code("""
+        2-Channel Mel-Spectrogram (Low + High Pass)
+            ↓
+        Initial Conv2D (64 filters, 7×7, stride 2)
+            ↓
+        Max Pooling (3×3, stride 2)
+            ↓
+        ResNet-18 Backbone:
+          ├─ Residual Block 1 (64 filters × 2)
+          ├─ Residual Block 2 (128 filters × 2, stride 2)
+          ├─ Residual Block 3 (256 filters × 2, stride 2)
+          └─ Residual Block 4 (512 filters × 2, stride 2)
+            ↓
+        Multi-Head Attention Module
+          ├─ Query projection (512 → 512)
+          ├─ Key projection (512 → 512)
+          ├─ Value projection (512 → 512)
+          └─ Weighted aggregation across time
+            ↓
+        Global Average Pooling (spatial)
+            ↓
+        Feed-Forward Classifier:
+          ├─ Dense(512 → 256) + ReLU + Dropout(0.4)
+          ├─ Dense(256 → 128) + ReLU + Dropout(0.3)
+          └─ Dense(128 → 4) + Softmax
+            ↓
+        Output: Negative Emotion Probabilities
+            (Angry / Sad / Fearful / Disgust)
+                    """, language="text")       
+            with arch2_col2:
+                st.info("""
+                **Architecture Highlights**:
+                **ResNet-18 Backbone**:
+                - Residual connections
+                - Skip connections prevent vanishing gradients
+                - Deep feature extraction (4 blocks)
+                **Multi-Head Attention**:
+                - Captures temporal dependencies
+                - Weights important time segments
+                - Aggregates utterance-level features
+                **Classifier**:
+                - 2-layer feed-forward
+                - Dropout regularization (0.4, 0.3)
+                - 4-class softmax output
+                **Total Parameters**: ~11M
+                **Input Shape**: (128, Time, 2)
+                """)
+            st.markdown("---")
+            # Training Configuration
+            st.subheader("Training Configuration")
+            train_config_col1, train_config_col2 = st.columns(2)
+            with train_config_col1:
+                st.markdown("""
+                **Model Setup**:
+                - Backbone: ResNet-18 (adapted for 2-channel audio)
+                - Input: 2-channel Mel-spectrograms
+                - Output: 4 negative emotions
+                - Loss: Categorical Cross-Entropy
+                **Data**:
+                - Training samples: 1,643 (negative only)
+                - Split: 80% train, 10% val, 10% test
+                - Augmentation: SpecAugment, time/freq masking
+                """)
+            with train_config_col2:
+                st.markdown("""
+                **Optimization**:
+                - Optimizer: Adam (lr = 1e-4)
+                - Batch size: 32
+                - Epochs: 100 (early stopping)
+                - Scheduler: ReduceLROnPlateau
+                **Regularization**:
+                - Dropout: 0.4 (layer 1), 0.3 (layer 2)
+                - L2 weight decay: 1e-5
+                - Early stopping patience: 10
+                """)
+            st.markdown("---")
+            # ========== RESNET RESULTS ==========
+            st.header("ResNet-18 Performance Results")
             st.write("""
-            **Common Confusions**:
-            **Fearful ↔ Angry**:
-            - Both high arousal
-            - Similar intensity
-            - Vocal tension overlap
-            **Sad ↔ Fearful**:
-            - Low energy overlap
-            - Pitch similarities
-            **Disgust ↔ Angry**:
-            - Harsh voice quality
-            - High-frequency components
+            The ResNetAudio model achieved **74.16% accuracy** for fine-grained negative-emotion classification, 
+            which is competitive for CNN-based architectures though lower than transformer-based approaches. 
+            The model demonstrates robust feature extraction for high-energy emotions like angry, while lower 
+            recall for disgust and fear suggests challenges in distinguishing subtle emotional cues.
             """)
-        st.markdown("---")
-        # Analysis
-        st.subheader("Analysis & Insights")
-        analysis_col1, analysis_col2 = st.columns(2)
-        with analysis_col1:
-            st.success("""
-            **What Works Well**:
-            **High-Energy Emotions** (Angry):
-            - Clear acoustic features
-            - Robust feature extraction
-            **Dual-Band Spectrograms**:
-            - Complementary frequency info
-            - Better than single-channel
-            **ResNet-18 Backbone**:
-            - Effective residual connections
-            - Deep feature hierarchy
-            **Attention Module**:
-            - Temporal dependency modeling
-            - Improves over plain CNN
-            """)
-        with analysis_col2:
-            st.warning("""
-            **Challenges Identified**:
-            **74.16% Accuracy**:
-            - Lower than transformers
-            - Competitive for CNN
-            **Low Recall** (Disgust/Fear):
-            - Underrepresented classes
-            - Subtle emotional cues
-            **Dataset Limitations**:
-            - Only 1,643 samples
-            - Class imbalance issues
-            **Confusion Patterns**:
-            - High-arousal overlap
-            - Needs better discrimination
-            """)
+            # Classification Report
+            result_col1, result_col2 = st.columns([2, 1])
+            with result_col1:
+                st.image(
+                    str(IMG_DIR / "resnet_audio_classification_report.png"),
+                    caption="Classification Report for ResNetAudio Model",
+                    use_container_width=True
+                )
+                st.write("""
+                **Performance Breakdown**:
+                **Strong Emotions**:
+                - **Angry**: Best performance
+                - High-energy, clear features
+                - Robust feature extraction
+                **Moderate**:
+                - **Sad**: Moderate recall
+                - Low arousal, subtle cues
+                **Challenging**:
+                - **Fearful**: Lower recall
+                - **Disgust**: Underrepresented
+                - Subtle emotional distinctions
+                """)
+            with result_col2:
+                st.success("""
+                **Performance Summary**:
+                **Overall Accuracy**: 74.16%
+                **Best Performer**: Angry
+                - Clear high-energy acoustic features
+                - Strong spectral patterns
+                **Challenging Classes**: 
+                - Disgust: Subtle cues
+                - Fear: Subdued expression
+                **vs CNN Baseline**:
+                - +14.16% improvement (60% → 74.16%)
+                - Better feature extraction
+                - Residual learning benefit
+                """)
+            st.markdown("---")
+            # Confusion Matrix
+            st.subheader("Confusion Matrix Analysis")
+            conf_col1, conf_col2 = st.columns([2, 1])
+            with conf_col1:
+                st.image(
+                    str(IMG_DIR / "resnet_audio_confusion_matrix.png"),
+                    caption="Confusion Matrix for ResNetAudio Model",
+                    use_container_width=True
+                )
+            with conf_col2:
+                st.write("""
+                **Common Confusions**:
+                **Fearful ↔ Angry**:
+                - Both high arousal
+                - Similar intensity
+                - Vocal tension overlap
+                **Sad ↔ Fearful**:
+                - Low energy overlap
+                - Pitch similarities
+                **Disgust ↔ Angry**:
+                - Harsh voice quality
+                - High-frequency components
+                """)
+            st.markdown("---")
+            # Analysis
+            st.subheader("Analysis & Insights")
+            analysis_col1, analysis_col2 = st.columns(2)
+            with analysis_col1:
+                st.success("""
+                **What Works Well**:
+                **High-Energy Emotions** (Angry):
+                - Clear acoustic features
+                - Robust feature extraction
+                **Dual-Band Spectrograms**:
+                - Complementary frequency info
+                - Better than single-channel
+                **ResNet-18 Backbone**:
+                - Effective residual connections
+                - Deep feature hierarchy
+                **Attention Module**:
+                - Temporal dependency modeling
+                - Improves over plain CNN
+                """)
+            with analysis_col2:
+                st.warning("""
+                **Challenges Identified**:
+                **74.16% Accuracy**:
+                - Lower than transformers
+                - Competitive for CNN
+                **Low Recall** (Disgust/Fear):
+                - Underrepresented classes
+                - Subtle emotional cues
+                **Dataset Limitations**:
+                - Only 1,643 samples
+                - Class imbalance issues
+                **Confusion Patterns**:
+                - High-arousal overlap
+                - Needs better discrimination
+                """)
 # ==================== TAB 6: CROSS-DATASET GENERALIZATION (LODO) ====================
 with tab5:
     st.header("Cross-Dataset Generalization via LODO")
