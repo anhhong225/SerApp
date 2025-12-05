@@ -20,12 +20,13 @@ for speech emotion recognition, their architectures, training procedures, and ev
 """)
 
 # Main tabs for different models
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "Traditional ML",
     "CNN",
     "CNN Hybrid Model (Spectrogram)",
     "Wav2Vec2",
-    "Cross-Dataset Generalization"
+    "Cross-Dataset Generalization",
+    "Summary"
 ])
 
 # ==================== TAB 1: TRADITIONAL ML ====================
