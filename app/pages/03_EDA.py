@@ -175,6 +175,10 @@ with tab3:
     st.subheader("Waveform and Spectrogram Examples")
     
     st.image(IMG_DIR / "waveform_spectrogram_emotions.png", 
+            use_container_width=True)
+    st.image(IMG_DIR / "waveform_spectrogram_emotions_2.png", 
+            use_container_width=True)
+    st.image(IMG_DIR / "waveform_spectrogram_emotions_3.png", 
             caption="Figure 4: Waveform and spectrogram of emotions",
             use_container_width=True)
     
