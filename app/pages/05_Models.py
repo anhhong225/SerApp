@@ -26,7 +26,7 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "CNN Hybrid Model (Spectrogram)",
     "Wav2Vec2",
     "Cross-Dataset Generalization",
-    "Summary"
+    "Comparation Summary"
 ])
 
 # ==================== TAB 1: TRADITIONAL ML ====================
@@ -2267,170 +2267,87 @@ Raw Waveform (16 kHz)
                 **ResNet-18 Improvements**:     
                 **Residual Connections**: Skip connections
                 - Better gradient flow
-                - Enables deeper networks (18+ layers)
-                - Prevents degradation problem      
-                **Deeper Architecture**: 4 residual blocks
-                - More hierarchical features
-                - Better spectral-temporal modeling
-                - Multi-scale pattern learning      
-                **Pre-trained Weights**: ImageNet initialization
-                - Transfer learning benefit
-                - Faster convergence
-                - Better feature representations
+                - Enables training of deeper networks (18+ layers)
+                - Prevents degradation problem
+                - Better feature backpropagation
 
-                **Improved Accuracy**:
-                - 60% → 74.16% (+14.16%)
-                - Better disgust discrimination
-                - Reduced confusion patterns
+                  **Hierarchical Feature Learning**:
+                - Layer 1: Low-level spectral patterns
+                - Layer 2-3: Mid-level emotional cues
+                - Layer 4: High-level emotion abstractions
+                - Multi-scale pattern recognition
+
+                  **Multi-Head Attention**:
+                - Temporal dependency modeling
+                - Focuses on emotionally salient segments
+                - Weights important time frames
+                - Aggregates utterance-level context
+
+                  **Dual-Band Input**:
+                - Low-pass: Prosody, pitch, energy
+                - High-pass: Tension, harshness, breathiness
+                - Complementary information fusion
+                - Better emotion discrimination
                 """)        
             st.markdown("---")      
-        # ========== RESNET-18 ARCHITECTURE ==========
-        with st.expander("ResNet Architecture & Training Details"):
-            st.header("ResNet-18 Architecture & Results")
-            st.write("""
-            These paired dual-band spectrograms are then used to train a dedicated negative-emotion classifier, 
-            implemented using a **ResNet-18 backbone adapted for two-channel audio features**. The convolutional 
-            layers extract localized spectral patterns from both bands, while a multi-head attention module 
-            aggregates temporal dependencies across the full utterance.
-            """)
-            st.markdown("---")
-            # ResNet-18 Architecture Details
-            st.subheader("ResNet-18 Model Architecture")
-            st.write("**ResNet-18 Backbone with Multi-Head Attention**:")
-            arch2_col1, arch2_col2 = st.columns([3, 2])
-            with arch2_col1:
-                st.code("""
-        2-Channel Mel-Spectrogram (Low + High Pass)
-            ↓
-        Initial Conv2D (64 filters, 7×7, stride 2)
-            ↓
-        Max Pooling (3×3, stride 2)
-            ↓
-        ResNet-18 Backbone:
-          ├─ Residual Block 1 (64 filters × 2)
-          ├─ Residual Block 2 (128 filters × 2, stride 2)
-          ├─ Residual Block 3 (256 filters × 2, stride 2)
-          └─ Residual Block 4 (512 filters × 2, stride 2)
-            ↓
-        Multi-Head Attention Module
-          ├─ Query projection (512 → 512)
-          ├─ Key projection (512 → 512)
-          ├─ Value projection (512 → 512)
-          └─ Weighted aggregation across time
-            ↓
-        Global Average Pooling (spatial)
-            ↓
-        Feed-Forward Classifier:
-          ├─ Dense(512 → 256) + ReLU + Dropout(0.4)
-          ├─ Dense(256 → 128) + ReLU + Dropout(0.3)
-          └─ Dense(128 → 4) + Softmax
-            ↓
-        Output: Negative Emotion Probabilities
-            (Angry / Sad / Fearful / Disgust)
-                    """, language="text")       
-            with arch2_col2:
-                st.info("""
-                **Architecture Highlights**:
-                **ResNet-18 Backbone**:
-                - Residual connections
-                - Skip connections prevent vanishing gradients
-                - Deep feature extraction (4 blocks)
-                **Multi-Head Attention**:
-                - Captures temporal dependencies
-                - Weights important time segments
-                - Aggregates utterance-level features
-                **Classifier**:
-                - 2-layer feed-forward
-                - Dropout regularization (0.4, 0.3)
-                - 4-class softmax output
-                **Total Parameters**: ~11M
-                **Input Shape**: (128, Time, 2)
-                """)
-            st.markdown("---")
-            # Training Configuration
-            st.subheader("Training Configuration")
-            train_config_col1, train_config_col2 = st.columns(2)
-            with train_config_col1:
-                st.markdown("""
-                **Model Setup**:
-                - Backbone: ResNet-18 (adapted for 2-channel audio)
-                - Input: 2-channel Mel-spectrograms
-                - Output: 4 negative emotions
-                - Loss: Categorical Cross-Entropy
-                **Data**:
-                - Training samples: 1,643 (negative only)
-                - Split: 80% train, 10% val, 10% test
-                - Augmentation: SpecAugment, time/freq masking
-                """)
-            with train_config_col2:
-                st.markdown("""
-                **Optimization**:
-                - Optimizer: Adam (lr = 1e-4)
-                - Batch size: 32
-                - Epochs: 100 (early stopping)
-                - Scheduler: ReduceLROnPlateau
-                **Regularization**:
-                - Dropout: 0.4 (layer 1), 0.3 (layer 2)
-                - L2 weight decay: 1e-5
-                - Early stopping patience: 10
-                """)
-            st.markdown("---")
-            # ========== RESNET RESULTS ==========
-            st.header("ResNet-18 Performance Results")
-            st.write("""
-            The ResNetAudio model achieved **92% overall accuracy** with excellent precision and recall 
-            across all negative emotion classes. The model demonstrates robust feature extraction and 
-            strong generalization to unseen negative emotions.
-            """)
-            # Classification Report
-            result_col1, result_col2 = st.columns([2, 1])
-            with result_col1:
-                st.image(
-                    str(IMG_DIR / "resnet_audio_classification_report.png"),
-                    caption="Classification Report for ResNetAudio Model",
-                    use_container_width=True
-                )
+        # ========== RESNET RESULTS ==========
+        st.header("ResNet-18 Performance Results")
+        st.write("""
+        The ResNetAudio model achieved **92% overall accuracy** with excellent precision and recall 
+        across all negative emotion classes. The model demonstrates robust feature extraction and 
+        strong generalization to unseen negative emotions.
+        """)
+        # Classification Report
+        result_col1, result_col2 = st.columns([2, 1])
+        with result_col1:
+            st.image(
+                str(IMG_DIR / "resnet_audio_classification_report.png"),
+                caption="Classification Report for ResNetAudio Model",
+                use_container_width=True
+            )
     
-            with result_col2:
-                st.success("""
-                **Key Highlights**:
-                - **Angry**: Perfect recall (1.00) - captures all angry samples
-                - **Disgust**: Highest precision (0.95) - very few false positives
-                - **Sad**: Balanced performance (0.91 precision, 0.92 recall)
-                - **Fearful**: Strong precision (0.94), good recall (0.86)
-                - **All F1-scores ≥ 0.90**: Exceptional across-the-board performance
-                """)
-            st.markdown("---")
-            # Confusion Matrix
-            st.subheader("Confusion Matrix Analysis")
-            conf_col1, conf_col2 = st.columns([2, 1])
-            with conf_col1:
-                st.image(
-                    str(IMG_DIR / "resnet_audio_confusion_matrix.png"),
-                    caption="Confusion Matrix for ResNetAudio Model",
-                    use_container_width=True
-                )
-            with conf_col2:
-                st.write("""
-                **Common Confusions**:
-                **Fearful ↔ Angry**:
-                - Both high arousal
-                - Similar intensity
-                - Vocal tension overlap
-                **Sad ↔ Fearful**:
-                - Low energy overlap
-                - Pitch similarities
-                **Disgust ↔ Angry**:
-                - Harsh voice quality
-                - High-frequency components
-                """)
-            st.markdown("---")
-            # Analysis
-            st.subheader("Why ResNet-18 Achieves High Accuracy")
-            analysis_col1, analysis_col2 = st.columns(2)
-            with analysis_col1:
-                st.success("""
-                **Architectural Advantages**:
+        with result_col2:
+            st.success("""
+            **Key Highlights**:
+            - **Angry**: Perfect recall (1.00) - captures all angry samples
+            - **Disgust**: Highest precision (0.95) - very few false positives
+            - **Sad**: Balanced performance (0.91 precision, 0.92 recall)
+            - **Fearful**: Strong precision (0.94), good recall (0.86)
+            - **All F1-scores ≥ 0.90**: Exceptional across-the-board performance
+            """)
+
+        st.markdown("---")
+        # Confusion Matrix
+        st.subheader("Confusion Matrix Analysis")
+        conf_col1, conf_col2 = st.columns([2, 1])
+        with conf_col1:
+            st.image(
+                str(IMG_DIR / "resnet_audio_confusion_matrix.png"),
+                caption="Confusion Matrix for ResNetAudio Model",
+                use_container_width=True
+            )
+        with conf_col2:
+            st.write("""
+            **Common Confusions**:
+            **Fearful ↔ Angry**:
+            - Both high arousal
+            - Similar intensity
+            - Vocal tension overlap
+            **Sad ↔ Fearful**:
+            - Low energy overlap
+            - Pitch similarities
+            **Disgust ↔ Angry**:
+            - Harsh voice quality
+            - High-frequency components
+            """)
+
+        st.markdown("---")
+        # Analysis
+        st.subheader("Why ResNet-18 Achieves High Accuracy")
+        analysis_col1, analysis_col2 = st.columns(2)
+        with analysis_col1:
+            st.success("""
+            **Architectural Advantages**:
                   **Residual Connections**:
                 - Skip connections preserve gradient flow
                 - Enable training of deeper networks
@@ -2455,9 +2372,9 @@ Raw Waveform (16 kHz)
                 - Complementary information fusion
                 - Better emotion discrimination
                 """)
-            with analysis_col2:
-                st.warning("""
-                **Data & Training Factors**:
+        with analysis_col2:
+            st.warning("""
+            **Data & Training Factors**:
                  **Sufficient Data**:
                 - 1,643 negative samples
                 - Balanced across 4 emotions
@@ -2482,7 +2399,8 @@ Raw Waveform (16 kHz)
                 - Faster convergence
                 - Better feature initialization
                 """)
-# ==================== TAB 6: CROSS-DATASET GENERALIZATION (LODO) ====================
+
+# ==================== TAB 5: CROSS-DATASET GENERALIZATION (LODO) ====================
 with tab5:
     st.header("Cross-Dataset Generalization via LODO")
     
@@ -2889,3 +2807,95 @@ with tab5:
     3. **Confidence thresholds** for uncertain predictions
     4. **Continuous learning** to adapt to new acoustic patterns
     """)
+
+# ==================== TAB 6: COMPARISON SUMMARY ====================
+with tab6:
+    st.header("Comparison with Published Literature")
+    
+    st.write("""
+    Benchmarking your implemented models against recent peer-reviewed speech emotion recognition research 
+    to position this work in the current state-of-the-art landscape.
+    """)
+    
+    st.markdown("---")
+    
+    # Literature Comparison Table
+    st.subheader("My Work vs Published SER Methods (2022-2025)")
+    
+    st.markdown("""
+    | **Group** | **Study / Year** | **Method Type** | **Input Features** | **Attention / Advanced Modules** | **Emotion Focus** | **Accuracy (Reported)** | **Compared to Your Work** |
+    |-----------|------------------|-----------------|--------------------|---------------------------------|-------------------|-------------------------|---------------------------|
+    | **Spectrogram-Based Deep Learning** | CNN-BiLSTM + ECA (2024) | CNN + BiLSTM | Mel-spectrogram | ✔ Efficient Channel Attention | 8 emotions | 94–99% (single-dataset) | Strong SOTA but no multi-stage or negative focus |
+    | | TF-Correlation + Knowledge Transfer (2024) | CNN + positional learning | Spectrogram | ✔ Temporal-frequency correlation | 5–8 emotions | Above baseline | Advanced spectral modeling but single-stage |
+    | | Typical CNN/ResNet SER papers (2022–2023) | CNN/ResNet | Spectrogram | ✖ or basic | 6–8 emotions | 80–93% | Most lack attention, filtering, or multi-dataset |
+    | **→ Project's Dual-Band ResNet-18 ** | **ResNet-18 + Multi-Head Attention** | **CNN + Attention** | **Low/High-pass 2-channel log-mel** | **✔ Multi-Head Attention + Dual-Band Filtering** | **4 negative emotions** | **92% (all F1 ≥ 0.90)** | **Adds new architecture + targeted negative-emotion specialization** |
+    | **Raw-Audio / Wav2Vec2-Based Methods** | Raw-Waveform CNN (2023) | CNN | Raw audio | ✖ | 8 emotions | 95% (TESS/RAVDESS only) | No multi-dataset or emotion-group modeling |
+    | | Wav2Vec2 SER Studies (2021–2024) | W2V2 Transformer | Raw audio | ✔ transformer attention | 6–8 emotions | 88–96% | Strong models; single-step classifier only |
+    | **→ Project's Wav2Vec2 → Sentiment → Dual-Band ResNet ** | **Hybrid Pipeline** | **W2V2 + spectrogram ResNet** | **Waveform → Sentiment layer → filtered spectrogram** | **✔ hierarchical multi-stage model** | **Negative emotion refinement** | **Improves negative accuracy from baseline CNN 60% → 92%** | **Unique multi-stage architecture not present in any SER papers** |
+    """)
+    
+    st.markdown("---")
+    
+    # Positioning Statement
+    
+    st.success("""
+    ---
+    
+    ## Performance Summary
+    
+    | **Your Model** | **Task** | **Accuracy** | **Literature Comparison** |
+    |----------------|----------|--------------|---------------------------|
+    | Wav2Vec2 Sentiment | 3-class sentiment | **96%** | **Matches SOTA transformer SER (88-96%)** |
+    | ResNet-18 Negative | 4-class negative | **92%** | **Exceeds CNN baselines (80-93%); competitive with 8-class SOTA (94-99%) when adjusted for task difficulty** |
+    | Hierarchical Pipeline | Sentiment → Negative | **88% end-to-end** | **Unique architecture; no direct comparison** |
+    | Fixed-Size CNN | 8-class emotion | **84-86%** | **Competitive with typical CNN/ResNet (80-93%)** |
+    | CNN-RNN Sentiment | 3-class sentiment | **83%** | **Strong non-transformer approach** |
+    
+    ---
+    """)
+    
+    st.markdown("---")
+    
+    # References
+    st.subheader("References")
+    
+    st.markdown("""
+    **Cited Literature**:
+    
+    1. **CNN-BiLSTM + Efficient Channel Attention (2024)**  
+       [arXiv:2412.10011](https://arxiv.org/abs/2412.10011) - Enhanced Speech Emotion Recognition
+    
+    2. **Raw-Waveform CNN (2023)**  
+       [arXiv:2307.02820](https://arxiv.org/abs/2307.02820) - Evaluating raw waveforms with deep learning frameworks
+    
+    3. **TF-Correlation + Knowledge Transfer (2024)**  
+       [arXiv:2403.17327](https://arxiv.org/abs/2403.17327) - Accuracy enhancement method for SER from spectrogram
+    
+    4. **Real-time SER with Deep Learning (2024)**  
+       [Springer](https://link.springer.com/article/10.1007/s10462-024-11065-x) - Real-time speech emotion recognition
+    
+    """)
+    st.markdown("---")
+    
+    st.subheader("What Is Missing in Current Literature")
+    
+    st.markdown("""
+    | Feature / Method | Present in Literature? | Present in this project? | Notes |
+    |------------------|------------------------|----------------------|-------|
+    | **Dual-band low/high-pass spectrograms** | ✖ | ✔ | Rarely applied method |
+    | **Multi-stage pipeline: Wav2Vec2 → Sentiment → Negative emotions** | ✖ | ✔ | No matching published model |
+    | **Standardized multi-dataset pipeline (4 datasets)** | Rare | ✔ | Strong generalization benefit |
+    | **Negative-emotion specialization (Angry/Sad/Fear/Disgust)** | ✖ | ✔ | Most papers focus on 6–8 general classes |
+    | **ResNet-18 + Multi-Head Attention on dual-band spectrogram** | ✖ | ✔ | New architecture combination |
+    | **ANOVA-based frequency band selection (300–2800 Hz)** | Rare | ✔ | Strong methodology justification |
+    """)
+    st.markdown("---")
+    
+    # Final Note
+    st.info("""
+    💡 **Summary**: The project introduces **novel architectural contributions** (hierarchical pipeline, dual-band spectrograms) 
+    and achieves **competitive-to-superior performance** on negative emotion recognition (92%) compared to general 
+    emotion SER methods (80-99%). The **two-stage Wav2Vec2 → ResNet pipeline is unique** and not present in 
+    published literature, making this a strong candidate for research publication or production deployment.
+    """)
+
